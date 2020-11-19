@@ -2,6 +2,7 @@
 # Build customization
 builds:
   - binary: html_to_excel
+    main: ./src/main/main.go
     goos:
       - windows
       - darwin
