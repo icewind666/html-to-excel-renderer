@@ -1,0 +1,21 @@
+{
+  "name": "html-to-excel-renderer",
+  "version": "1.0.0",
+  "description": "Handlebars to excel renderer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vladimir Korennoy",
+  "license": "ISC",
+  "dependencies": {
+    "go-npm": "^0.1.9"
+  }
+  "postinstall": "go-npm install",
+  "preuninstall": "go-npm uninstall", 
+  "goBinary": {
+      "name": "command-name",
+      "path": "./bin",
+      "url": "https://github.com/user/my-go-package/releases/download/v{{version}}/myGoPackage_{{version}}_{{platform}}_{{arch}}.tar.gz"
+  }
+}

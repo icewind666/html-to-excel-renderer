@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<!-- saved from url=(0233)https://coderoad.ru/30960805/%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B0-libxml2-%D0%BD%D0%B5-%D0%BD%D0%B0%D0%B9%D0%B4%D0%B5%D0%BD%D0%B0-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-gokogiri-%D0%BD%D0%B0-windows -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Required meta tags -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Material Design for Bootstrap fonts and icons -->
+
+<link rel="stylesheet" href="./test3_files/bootstrap.75f912b2cbba.css">
+<link rel="stylesheet" href="./test3_files/all.5fd5e45c6313.css">
+<link rel="stylesheet" href="./test3_files/Roboto_300,400,500,700.3f800ce36266">
+
+
+<!-- <link href="/static/css/debug-bootstrap.43f7fd3dc10e.css" rel="stylesheet"> -->
+
+<title> ошибка libxml2 не найдена при установке gokogiri на windows - go  - CodeRoad</title>
+ 
+	<meta name="keywords" content="go, libxml2, gokogiri">
+	
+		<meta name="description" content=" у вас есть пространство на вашем пути к libxml. Вариант 1: Удалите libxml и переустановите его по пути без пробелов (не программные файлы) вариант 2 (может не работать для gcc) в переменной среды...">
+	
+
+
+
+<style>
+
+.container-fluid , .navbar {
+	max-width: 1800px
+}
+
+.logo {
+	width: 40px;
+	height: 40px;
+	font-size: 1.5rem;
+	float: left;
+}
+#content {
+	min-height: 1100px;
+}
+.navbar {
+	min-height: 60px;
+}
+
+a:hover, a:hover.nav-link{
+	text-decoration: underline;
+}
+
+a, a:VISITED, .btn-link {
+	text-decoration: none;
+	color: #1675d1;
+}
+
+a.btn-secondary {
+	color: #fff;
+} 
+.btn-outline-light:not(:disabled):not(.disabled).active {
+	background-color: rgba(0, 0, 0, 0.03);
+	border-color: rgba(0, 0, 0, 0.125);
+}
+.btn-outline-light {
+	border-color: rgba(0, 0, 0, 0.125);
+	color: #1675d1;
+}
+.form-control:focus {
+	box-shadow: none;
+}
+
+.form-control-underlined {
+	border-width: 0;
+	border-bottom-width: 5px;
+	border-radius: 0;
+	padding-left: 0;
+}
+.autocomplete, .autocomplete.open{
+	z-index: 1022;
+	color: black;
+}
+ol {
+	padding-left: 1.5rem;
+}
+ol li {
+	padding-left: 0.5rem;
+}
+em {
+	font-weight: 600;
+}
+strong {
+	font-weight: 700;
+}
+html, body {
+	height: 100%;
+}
+
+.post-text ul p:last-of-type, .wmd-preview ul p:last-of-type, .post-text ol p:last-of-type, .wmd-preview ol p:last-of-type {
+margin-bottom: 0;
+}
+h1, .h1 {
+font-size: 2.2rem;
+}
+</style>
+
+
+<style>
+.votes {
+padding: 0px;
+	/* width: 50px !important;
+	max-width: 60px !important; */
+	text-align: center;
+	font-size: 1.25rem
+}
+.votes i{
+	font-size: 1.75rem
+}
+img {
+	max-width: 100%;
+	border: 1px solid #ddd;
+}
+pre {
+	overflow: auto;
+	padding: 16px;
+	background-color: #f6f8fa;
+	border: 0.5px solid #ddd;
+	border-radius: 3px;
+	max-height: 700px;
+}
+pre code {
+	background-color: inherit;
+	padding: 0px 0px;
+}
+code {
+	background-color: #f5f5f5;
+	padding: 1px 5px;
+}
+blockquote {
+  overflow: auto;
+  background: #f9f9f9;
+  border-left: 4px solid #ccc;
+  margin: 1.5em 4px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+  color: #ccc;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+blockquote p {
+  display: inline;
+}
+.tooltip.show {
+opacity:.5
+}
+
+</style>
+
+
+<style>/* You can add global styles to this file, and also import other style files */
+</style></head>
+<body>
+	<nav class="navbar navbar-expand navbar-dark bg-primary text-light shadow-sm sticky-top" style="white-space: nowrap">
+	<div class="container-fluid">
+		<a class="btn p-0 pb-1 d-lg-none" data-toggle="collapse" href="https://coderoad.ru/30960805/%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B0-libxml2-%D0%BD%D0%B5-%D0%BD%D0%B0%D0%B9%D0%B4%D0%B5%D0%BD%D0%B0-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-gokogiri-%D0%BD%D0%B0-windows#navbarToggleExternalContent" role="button" aria-expanded="false" aria-controls="navbarToggleExternalContent"> 
+			<span class="navbar-toggler-icon"></span> 
+		</a>
+		<div class="col-lg-2 d-none d-lg-flex left-menu align-items-center">
+		<div class="logo border border-white rounded d-none d-xl-flex justify-content-center align-items-center">
+			<a href="https://coderoad.ru/"><i class="fas fa-code text-white"></i></a>
+		</div>
+		<a class="navbar-brand text-light pl-2" href="https://coderoad.ru/">CodeRoad</a>
+		</div>
+		<form class="navbar-form w-100 pl-3 pr-2" id="search_form" method="get" action="https://coderoad.ru/search/" onsubmit="javascript: return submit_form()">
+			<div class="p-1 pl-2 pr-3 bg-light rounded rounded-pill  ">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<button id="button-addon1" type="submit" class="btn btn-link">
+							<i class="fa fa-search"></i>
+						</button>
+					</div>
+					<input type="search" placeholder="Что вы ищете?" aria-describedby="button-addon1" class="form-control border-0 bg-light" data-autocomplete="/search/autocomplete/" id="search_text" name="q" autocomplete="off">
+	
+				<div class="autocomplete" style="top:43px;left:37px;width:1069px;"></div></div>
+			</div>
+		</form>
+		<div class="col-lg-2 d-none d-xl-block left-menu text-center">
+		    <a class="text-light" href="https://coderoad.ru/about.html">О нас</a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a class="text-light" href="https://coderoad.ru/contacts.html">Контакты</a>
+		</div>
+  
+	</div>
+</nav>
+	
+	<div class="container-fluid ml-0 shadow">
+		<div class="row align-items-start navbar-expand-lg bg-primary">
+			<div class="col-sm collapse navbar-collapse pt-4 text-light left-menu bg-primary" id="navbarToggleExternalContent">
+				 <nav class="sidebar">
+<div class="row">
+<div class="col col-lg-12">
+<a class="nav-link text-light navbar-brand" href="https://coderoad.ru/">Главная</a><br>
+<a class="nav-link text-light navbar-brand" href="https://coderoad.ru/list/?page=1&amp;sort=view">Вопросы</a>
+<ul class="d-none d-sm-block d-md-block">
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=date">Новые</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view">Популярные</a></li>
+</ul>
+<a class="nav-link text-light navbar-brand" href="https://coderoad.ru/tags/">Теги</a>
+</div>
+<div class="col col-lg-12">
+<ul class="d-none d-sm-block d-md-block py-0 my-0">
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=javascript">javascript</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=java">java</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=c%23">c#</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=php">php</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=python">python</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=android">android</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=jquery">jquery</a></li>
+</ul>
+</div>
+<div class="col col-lg-12">
+<ul class="d-none d-sm-block py-0 my-0">
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=html">html</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=c%2b%2b">c++</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=ios">ios</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=css">css</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=mysql">mysql</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=sql">sql</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=asp.net">asp.net</a></li>
+</ul>
+</div>
+<div class="col d-none d-md-block col-lg-12">
+<ul class="py-0 my-0">
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=c">c</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=r">r</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=ruby-on-rails">ruby-on-rails</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=arrays">arrays</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=node.js">node.js</a></li>
+<li><a class="nav-link text-light pl-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=.net">.net</a></li>
+</ul>
+</div>
+
+</div></nav> 
+			</div>
+				
+			<div class="col-12 col-lg-10 position-relative border-left bg-white">
+				
+				<!-- Page Content -->
+				<div class="row h-100">
+					<div id="content" class="overflow-hidden border-right col-xl-9 col-lg-12 h-100 px-4 pb-5 pt-4">
+							<div class="border-top d-block d-sm-none d-md-none"></div>
+						
+
+
+<br>
+
+<h1 class="text-break">ошибка libxml2 не найдена при установке gokogiri на windows</h1>
+
+<div class="text-break">
+
+<p>Я пытаюсь установить  <a href="https://github.com/moovweb/gokogiri" rel="nofollow noreferrer">gokogiri</a>  на машину Windows 8, следуя инструкциям на странице github :
+
+</p>
+
+
+<blockquote>
+  <p>Устанавливать:
+
+</p>
+  
+  
+<ul>
+  <li>sudo apt-get install libxml2-dev
+</li>
+  
+<li>go получить github.com/moovweb/gokogiri
+
+
+</li>
+  </ul>
+</blockquote>
+
+
+<p>пропуская первую команду (поскольку она недоступна на Windows), я получаю следующую ошибку :
+
+</p>
+
+ <p><img src="./test3_files/tkelu.png" alt="enter image description here">
+ </p>
+
+
+<p>На что жалуется ошибка? Должен ли я установить libxml-2.0 вручную перед повторной попыткой команды "go get"?
+
+</p>
+
+ <p><strong>UPDATE</strong> :
+ </p>
+
+
+<p>Ниже приведены шаги, которые я сделал, каждый шаг основан на сообщении об ошибке, которое я получаю от повторной попытки команды  <code>go get</code>  после завершения предыдущего шага :
+
+
+</p>
+
+
+<ul>
+<li><p>Загрузите  <code>pkg-config_0.26-1_win32.zip</code>  отсюда , unzip/extract, и добавьте папку  <code>bin</code>  в переменную среды  <code>path</code> 
+
+
+</p></li>
+
+<li><p>Не загружайте  <code>libxml2-2.9.2-win32-x86.7z</code>  отсюда , распакуйте. Создать новую переменную среды  <code>PKG_CONFIG_PATH</code> ,  <code>\lib\pkgconfig</code>  и добавить папку в libxml переменной ОКР.
+
+
+</p></li>
+
+<li><p>Не загружайте и устанавливайте tdm64-gcc отсюда
+
+
+ </p></li>
+</ul>
+
+
+ <p>Теперь сообщение об ошибке выглядит следующим образом. Что мне делать дальше? Как правильно сделать, чтобы  <code>gcc</code>  знал о местоположении моих файлов libxml2?
+
+</p>
+
+ <p><img src="./test3_files/h5tcA.png" alt="enter image description here"> </p>
+
+
+
+
+	
+	<a class="btn btn-secondary btn-sm shadow-sm m-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=go" role="button" data-toggle="popover" data-trigger="hover" title="" data-placement="top" data-content="Go-это язык программирования с открытым исходным кодом. Он статически типизирован, с синтаксисом, свободно производным от C, добавляя автоматическое управление памятью, безопасность типов, некоторые возможности динамического ввода, дополнительные встроенные типы, такие как массивы переменной длины и карты значений ключей, и большую стандартную библиотеку." data-original-title="go">go</a>
+	
+	<a class="btn btn-secondary btn-sm shadow-sm m-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=libxml2" role="button" data-toggle="popover" data-trigger="hover" title="" data-placement="top" data-content="Библиотека программного обеспечения для разбора документов XML." data-original-title="libxml2">libxml2</a>
+	
+	<a class="btn btn-secondary btn-sm shadow-sm m-1" href="https://coderoad.ru/list/?page=1&amp;sort=view&amp;tag=gokogiri" role="button" data-toggle="popover" data-trigger="hover" title="" data-placement="top" data-content="Привязки LibXML для языка программирования Go." data-original-title="gokogiri">gokogiri</a>
+	
+
+</div>
+
+<br>
+<div class="d-flex justify-content-between align-items-center">
+<button type="button" class="btn btn-link btn-copy js-tooltip js-copy" data-toggle="tooltip" data-placement="bottom" data-copy="https://coderoad.ru/30960805/" title="" data-original-title="Скопировать адрес">
+<small><i class="far fa-copy"></i> Поделиться</small>
+</button>
+<a href="https://stackoverflow.com/questions/30960805" rel="nofollow noreferrer">
+<small><i class="far fa-copy"></i> Источник</small>
+</a>
+<small class="d-flex align-items-center text-muted">
+<b>har07</b> &nbsp; &nbsp;
+
+ <i class="d-none d-sm-inline">21 июня 2015 в 02:46</i>
+ 
+</small>
+</div>
+
+<br><br>
+
+<h3>
+
+1 Ответ
+
+</h3>
+
+
+
+<hr id="">
+<div class="ads">
+<script type="text/javascript" async="" src="./test3_files/analytics.js.Без названия"></script><script async="" src="./test3_files/f.txt"></script>
+<!-- coderoad-horizontal -->
+<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1392785890131419" data-ad-slot="4473067401" data-ad-format="auto" data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+
+
+
+
+<hr id="30961112">
+<div class="row pt-1 pb-2">
+<div class="col-md-1 col-sm-2 votes text-muted d-none d-sm-block">
+
+<i class="fa fa-angle-up "></i><br>
+1<br>
+<i class="fa fa-angle-down"></i><br>
+</div>
+<div class="col-md-11 col-sm-10 col-xs-12 answer text-break">
+<p>у вас есть пространство на вашем пути к libxml.
+</p>
+
+
+<p>Вариант 1: Удалите libxml и переустановите его по пути без пробелов (не программные файлы)
+</p>
+
+
+<p>вариант 2 (может не работать для gcc) в переменной среды указывает на libxml (включая ваш путь) используйте кавычки вокруг имени path to libxml</p>
+
+</div>
+</div>
+<div class="d-flex justify-content-between">
+
+<button type="button" class="btn btn-link btn-copy js-tooltip js-copy" data-toggle="tooltip" data-placement="bottom" data-copy="https://coderoad.ru/30960805/ошибка-libxml2-не-найдена-при-установке-gokogiri-на-windows#30961112" title="" data-original-title="Скопировать адрес">
+<small><i class="far fa-copy"></i> Поделиться</small>
+</button>
+
+
+<small class="d-flex align-items-center text-muted">
+<b>Srgrn</b> &nbsp; &nbsp;
+
+ <i class="d-none d-sm-inline">21 июня 2015 в 03:52</i>
+ 
+</small>
+</div>
+
+
+
+
+
+
+<!--noindex-->
+<br><br>
+<hr>
+<div class="sidebar-header">
+	<h4>Похожие вопросы:</h4>
+</div>
+
+
+	
+	
+	<br>
+		<a href="https://coderoad.ru/29901728/Go-lang-%D0%BA%D0%B0%D0%BA-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-libxml2-gokogiri-%D0%BD%D0%B0-windows">Go lang: как установить libxml2/gokogiri на windows</a>
+		<p class="text-break small">
+		 Если есть относительно простой способ заставить go + libxml2 + gokogiri работать на windows? Я имею в виду, что я могу установить его (но на данный момент я не могу, застрял с Package libxml-2.0 was...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/33785755/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-Could-not-find-function-xmlCheckVersion-in-library-libxml2-Is-libxml2">Получение "Could not find function xmlCheckVersion in library libxml2. Is libxml2 installed?" при установке lxml через pip</a>
+		<p class="text-break small">
+		 Я получаю ошибку Could not find function xmlCheckVersion in library libxml2. Is libxml2 installed? при попытке установить lxml через pip. c:\users\f\appdata\local\temp\xmlXPathInitqjzysz.c(1) :...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/44512577/%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B7%D0%B0%D0%B2%D0%B8%D1%81%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8-gokogiri-%D0%B2%D1%8B%D0%B7%D1%8B%D0%B2%D0%B0%D0%B5%D1%82-%D0%B2%D1%8B%D1%85%D0%BE%D0%B4-Killed-9">Добавление зависимости gokogiri вызывает выход `Killed: 9`</a>
+		<p class="text-break small">
+		 Среда, которую я использую, - это go1.8 на MacOS Sierra. Код: package main import ( fmt io/ioutil github.com/moovweb/gokogiri github.com/moovweb/gokogiri/xpath ) func main() { fmt.Println(hello...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/9587997/%D0%9E%D1%88%D0%B8%D0%B1%D0%BA%D0%B8-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-XMLSec-%D0%BD%D0%B0-Mac-OS-10-6-8">Ошибки при установке XMLSec на Mac OS 10.6.8</a>
+		<p class="text-break small">
+		 Я хотел бы использовать библиотеку XMLSec в одном из моих приложений iOS. Я выполнил все инструкции, упомянутые на http://www.aleksey.com/xmlsec/download.html и загрузил все необходимые библиотеки и...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/17348302/%D0%BF%D1%80%D0%BE%D0%B1%D0%BB%D0%B5%D0%BC%D1%8B-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-libxml2-%D0%BD%D0%B0-linux">проблемы при установке libxml2 на linux</a>
+		<p class="text-break small">
+		 Я пытаюсь установить libxml2-2.9.1 на Ubuntu на виртуальной машине. Я следовал шагам из обеих ссылок, приведенных ниже: http://www.linuxfromscratch.org/blfs/view/svn/general/libxml2.html...
+		</p>
+	
+	
+	
+	<div class="ads">
+	<script async="" src="./test3_files/f.txt"></script>
+	<ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-gw-3+1f-3d+2z" data-ad-client="ca-pub-1392785890131419" data-ad-slot="7548913885"></ins>
+	<script>
+ 	    (adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+	</div>
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/20729806/%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B8-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-libxml2">получение ошибки при установке libxml2</a>
+		<p class="text-break small">
+		 Я пытаюсь установить libxml2 для Python версии 2.7.3, но всякий раз, когда я пытаюсь установить его дает мне ошибку: не удалось найти заголовки для libxml2: update includes_dir В поисках обходного...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/27474239/%D0%9A%D0%B0%D0%BA-%D1%8F-%D0%BC%D0%BE%D0%B3%D1%83-%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D1%82%D1%8C-xml-%D1%81-%D0%BF%D1%80%D0%BE%D1%81%D1%82%D1%80%D0%B0%D0%BD%D1%81%D1%82%D0%B2%D0%BE%D0%BC-%D0%B8%D0%BC%D0%B5%D0%BD-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D1%83%D1%8F-gokogiri-libxml2">Как я могу разобрать xml с пространством имен, используя gokogiri (libxml2)?</a>
+		<p class="text-break small">
+		 Я использую github.com/moovweb/gokogiri для разбора документа XML. Следующее работает при разборе var b , но когда я пытаюсь сделать то же самое на var a (который имеет пространство имен), я не...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/18731886/%D0%A1%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-CiSvc-%D0%BD%D0%B5-%D0%BD%D0%B0%D0%B9%D0%B4%D0%B5%D0%BD%D0%B0-%D0%BD%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%B5-Windows-Server-2012-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-CRM-4-0">Служба CiSvc не найдена на сервере Windows Server 2012 при установке CRM 4.0</a>
+		<p class="text-break small">
+		 При установке CRM 4.0 на Windows Server 2012, я получаю сообщение об ошибке: Служба cisvc не была найдена на компьютере 'DVWEB03'. Указанная служба не существует как установленная служба Дело в том,...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/32253981/%D0%9E%D1%88%D0%B8%D0%B1%D0%BA%D0%B0-%D0%BF%D1%83%D1%82%D0%B8-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-react-native-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D0%B0-%D0%BD%D0%B5-%D0%BD%D0%B0%D0%B9%D0%B4%D0%B5%D0%BD%D0%B0-%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B0">Ошибка пути при установке react-native (команда не найдена ошибка)</a>
+		<p class="text-break small">
+		 Я пытаюсь установить react-native. Я выполнил все шаги здесь: https://facebook.github.io/react-native/docs/getting-started.html#content Когда я использую эту команду : react-native newProject Я...
+		</p>
+	
+	
+	
+	
+	
+	
+	<br>
+		<a href="https://coderoad.ru/40568174/%D0%9A%D0%B0%D0%BA-%D1%81%D0%B2%D1%8F%D0%B7%D0%B0%D1%82%D1%8C-libxml2-%D1%81-zlib1-%D0%BD%D0%B0-Windows">Как связать libxml2 с zlib1 на Windows?</a>
+		<p class="text-break small">
+		 Мне нужно скомпилировать 32-битные и 64-битные двоичные файлы libxml2 для моего плагина TeamSpeak 3 , потому что я не смог найти 64-битную загрузку dll/lib. Когда я использую свой скомпилированный...
+		</p>
+	
+	
+	
+	<div class="ads">
+	<script async="" src="./test3_files/f.txt"></script>
+	<ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-gw-3+1f-3d+2z" data-ad-client="ca-pub-1392785890131419" data-ad-slot="7548913885"></ins>
+	<script>
+ 	    (adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+	</div>
+	
+	
+	
+
+<!--/noindex-->
+
+
+					</div>
+					<div class="col-xl-3 col-lg-12 bg-white">
+						<div class="sticky-top pt-4" style="z-index: 1000">
+						 
+
+
+
+<nav class="sidebar d-none d-xl-block pt-1">
+	<div class="sidebar-header">
+		<h5>Похожие вопросы</h5>
+	</div>
+	<ul class="list-unstyled pt-2">
+	
+		
+		<li>
+			<a href="https://coderoad.ru/29901728/Go-lang-%D0%BA%D0%B0%D0%BA-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-libxml2-gokogiri-%D0%BD%D0%B0-windows" class="nav-link">Go lang: как установить libxml2/gokogiri на windows</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/33785755/%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-Could-not-find-function-xmlCheckVersion-in-library-libxml2-Is-libxml2" class="nav-link">Получение "Could not find function xmlCheckVersion in library libxml2. Is libxml2 installed?" при установке lxml через pip</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/44512577/%D0%94%D0%BE%D0%B1%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B7%D0%B0%D0%B2%D0%B8%D1%81%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8-gokogiri-%D0%B2%D1%8B%D0%B7%D1%8B%D0%B2%D0%B0%D0%B5%D1%82-%D0%B2%D1%8B%D1%85%D0%BE%D0%B4-Killed-9" class="nav-link">Добавление зависимости gokogiri вызывает выход `Killed: 9`</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/9587997/%D0%9E%D1%88%D0%B8%D0%B1%D0%BA%D0%B8-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-XMLSec-%D0%BD%D0%B0-Mac-OS-10-6-8" class="nav-link">Ошибки при установке XMLSec на Mac OS 10.6.8</a>
+		</li>
+		
+		
+			
+		
+		<li style="text-align: center;" class="ads">
+		<script async="" src="./test3_files/f.txt"></script>
+		<!-- coderoad-vertical -->
+		<ins class="adsbygoogle" style="display:inline-block;width:240px;height:400px" data-ad-client="ca-pub-1392785890131419" data-ad-slot="8654269819"></ins>
+		<script>
+	  	   (adsbygoogle = window.adsbygoogle || []).push({});
+		</script>
+		</li>
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/17348302/%D0%BF%D1%80%D0%BE%D0%B1%D0%BB%D0%B5%D0%BC%D1%8B-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-libxml2-%D0%BD%D0%B0-linux" class="nav-link">проблемы при установке libxml2 на linux</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/20729806/%D0%BF%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B8-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-libxml2" class="nav-link">получение ошибки при установке libxml2</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/27474239/%D0%9A%D0%B0%D0%BA-%D1%8F-%D0%BC%D0%BE%D0%B3%D1%83-%D1%80%D0%B0%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D1%82%D1%8C-xml-%D1%81-%D0%BF%D1%80%D0%BE%D1%81%D1%82%D1%80%D0%B0%D0%BD%D1%81%D1%82%D0%B2%D0%BE%D0%BC-%D0%B8%D0%BC%D0%B5%D0%BD-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D1%83%D1%8F-gokogiri-libxml2" class="nav-link">Как я могу разобрать xml с пространством имен, используя gokogiri (libxml2)?</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/18731886/%D0%A1%D0%BB%D1%83%D0%B6%D0%B1%D0%B0-CiSvc-%D0%BD%D0%B5-%D0%BD%D0%B0%D0%B9%D0%B4%D0%B5%D0%BD%D0%B0-%D0%BD%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%B5-Windows-Server-2012-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-CRM-4-0" class="nav-link">Служба CiSvc не найдена на сервере Windows Server 2012 при установке CRM 4.0</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/32253981/%D0%9E%D1%88%D0%B8%D0%B1%D0%BA%D0%B0-%D0%BF%D1%83%D1%82%D0%B8-%D0%BF%D1%80%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5-react-native-%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D0%B0-%D0%BD%D0%B5-%D0%BD%D0%B0%D0%B9%D0%B4%D0%B5%D0%BD%D0%B0-%D0%BE%D1%88%D0%B8%D0%B1%D0%BA%D0%B0" class="nav-link">Ошибка пути при установке react-native (команда не найдена ошибка)</a>
+		</li>
+		
+		
+			
+		
+	
+	
+		
+		<li>
+			<a href="https://coderoad.ru/40568174/%D0%9A%D0%B0%D0%BA-%D1%81%D0%B2%D1%8F%D0%B7%D0%B0%D1%82%D1%8C-libxml2-%D1%81-zlib1-%D0%BD%D0%B0-Windows" class="nav-link">Как связать libxml2 с zlib1 на Windows?</a>
+		</li>
+		
+		
+			
+		
+	
+	
+	</ul>
+</nav>
+
+<nav class="sidebar d-none d-sm-block d-md-block ">
+	<div class="sidebar-header">
+		<h5>Другие вопросы</h5>
+	</div>
+	<ul class="list-unstyled ">
+	
+		
+		<li>
+			<a href="https://coderoad.ru/50602933/SSL-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%B0-%D0%B4%D0%BB%D1%8F-%D1%81%D0%B0%D0%B9%D1%82%D0%B0-%D0%B8%D0%BC%D0%B5%D1%8E%D1%89%D0%B5%D0%B3%D0%BE-%D0%B4%D0%BE%D0%BC%D0%B5%D0%BD-%D0%B7%D0%B0%D1%80%D0%B5%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D1%8B%D0%B9-%D0%BD%D0%B0-%D0%B4%D1%80%D1%83%D0%B3%D0%BE%D0%BC" class="nav-link">SSL установка сертификата для сайта, имеющего домен, зарегистрированный на...</a>
+
+		</li>
+		
+	
+		
+		<li>
+			<a href="https://coderoad.ru/15341680/%D0%9A%D0%B0%D0%BA-%D1%8F-%D0%BC%D0%BE%D0%B3%D1%83-%D0%B7%D0%B0%D0%B4%D0%B0%D1%82%D1%8C-%D0%BF%D1%83%D1%82%D1%8C-%D0%BA-%D1%84%D0%B0%D0%B9%D0%BB%D1%83-%D0%B4%D0%BB%D1%8F-%D0%B7%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8-%D0%B5%D1%81%D0%BB%D0%B8-%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82-input-%D0%BD%D0%B5-%D0%B2%D0%B8%D0%B4%D0%B5%D0%BD-%D0%B8" class="nav-link">Как я могу задать путь к файлу для загрузки, если элемент &lt;input&gt; не виден и...</a>
+
+		</li>
+		
+	
+		
+		<li>
+			<a href="https://coderoad.ru/5963381/%D0%BA%D0%B0%D0%BA-%D0%B8%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D1%8C-eclipse-workspace-%D0%BD%D0%B0-%D1%80%D0%B0%D0%B7%D0%BD%D1%8B%D1%85-%D0%BA%D0%BE%D0%BC%D0%BF%D1%8C%D1%8E%D1%82%D0%B5%D1%80%D0%B0%D1%85" class="nav-link">как использовать eclipse workspace на разных компьютерах</a>
+
+		</li>
+		
+	
+		
+		<li>
+			<a href="https://coderoad.ru/37644155/Python-%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D1%8C-%D0%BA%D0%BE%D1%82%D0%BE%D1%80%D1%8B%D0%B9-%D0%BE%D1%86%D0%B5%D0%BD%D0%B8%D0%B2%D0%B0%D0%B5%D1%82-%D0%B2%D0%B5%D1%80%D0%BE%D1%8F%D1%82%D0%BD%D0%BE%D1%81%D1%82%D1%8C-%D1%82%D0%BE%D0%B3%D0%BE-%D1%87%D1%82%D0%BE-%D1%82%D0%B5%D0%BA%D1%81%D1%82-%D1%8F%D0%B2%D0%BB%D1%8F%D0%B5%D1%82%D1%81%D1%8F" class="nav-link">Python модуль, который оценивает вероятность того, что текст является...</a>
+
+		</li>
+		
+	
+		
+		<li>
+			<a href="https://coderoad.ru/26133593/%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-regex-%D0%B4%D0%BB%D1%8F-%D1%81%D0%BE%D0%BF%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F-%D0%BC%D0%B5%D0%B6%D0%B4%D1%83%D0%BD%D0%B0%D1%80%D0%BE%D0%B4%D0%BD%D1%8B%D1%85-unicode-%D0%B1%D1%83%D0%BA%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE-%D1%86%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D1%8B%D1%85" class="nav-link">Использование regex для сопоставления международных / unicode буквенно-цифровых...</a>
+
+		</li>
+		
+	
+	</ul>
+</nav> 
+
+
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<!-- Optional JavaScript -->
+
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="./test3_files/jquery-3.2.1.slim.min.5f48fc77cac9.js.Без названия" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="./test3_files/bootstrap.bundle.min.a454220fc070.js.Без названия"></script>
+	<link rel="stylesheet" href="./test3_files/autocomplete-2.7.0.889b07d03339.css" type="text/css">
+	<script src="./test3_files/autocomplete-2.7.0.49a72778714e.js.Без названия"></script>
+	<script src="./test3_files/jquery.iframetracker.min.c28ccca6de79.js.Без названия"></script>
+	
+	<script type="text/javascript">
+function submit_form() {
+	if (document.querySelector("div.autocomplete li.active")) {
+		return false;
+	} else {
+		document.getElementById('search_form').submit();	
+	}
+}
+AutoComplete({
+     EmptyMessage: "No item found",
+     Url: '/search/autocomplete/',
+     _Select : function(item) {
+    	 if (item.hasAttribute("data-autocomplete-value")) {
+             this.Input.value = item.getAttribute("data-autocomplete-value");
+         }
+         else {
+             this.Input.value = item.innerHTML;
+         }
+         this.Input.setAttribute("data-autocomplete-old-value", this.Input.value);
+    	 document.getElementById('search_form').submit();
+     },
+     _Focus: function () {
+         var oldValue = this.Input.getAttribute("data-autocomplete-old-value");
+         if ((!oldValue || this.Input.value != oldValue) && this._MinChars() <= this.Input.value.length) {
+             this.DOMResults.setAttribute("class", "autocomplete open shadow");
+         }
+     },
+     _Position: function () {
+         this.DOMResults.setAttribute("class", "autocomplete");
+         this.DOMResults.setAttribute("style", "top:" + (this.Input.offsetTop + this.Input.offsetHeight+5) + "px;left:" + this.Input.offsetLeft + "px;width:" + (this.Input.clientWidth-25) + "px;");
+     },
+     _RenderResponseItems: function (response) {
+         var ul = document.createElement("ul"), li = document.createElement("li"), limit = this._Limit();
+         ul.setAttribute("class", "mdc-list");
+         // Order
+         if (limit < 0) {
+             response = response.reverse();
+         }
+         else if (limit === 0) {
+             limit = response.length;
+         }
+         for (var item = 0; item < Math.min(Math.abs(limit), response.length); item++) {
+             li.innerHTML = response[item].Label;
+             li.setAttribute("data-autocomplete-value", response[item].Value);
+             li.setAttribute("class", "mdc-list-item");
+             ul.appendChild(li);
+             li = document.createElement("li");
+         }
+         return ul;
+     },
+});
+
+ </script>
+ <script type="text/javascript">
+ function copyToClipboard(text, el) {
+	  var copyTest = document.queryCommandSupported('copy');
+	  var elOriginalText = el.attr('data-original-title');
+
+	  if (copyTest === true) {
+	    var copyTextArea = document.createElement("textarea");
+	    copyTextArea.value = text;
+	    document.body.appendChild(copyTextArea);
+	    copyTextArea.select();
+	    try {
+	      var successful = document.execCommand('copy');
+	      var msg = successful ? 'Скопировано!' : 'Whoops, not copied!';
+	      el.attr('data-original-title', msg).tooltip('show');
+	    } catch (err) {
+	      console.log('Oops, unable to copy');
+	    }
+	    document.body.removeChild(copyTextArea);
+	    el.attr('data-original-title', elOriginalText);
+	  } else {
+	    // Fallback if browser doesn't support .execCommand('copy')
+	    window.prompt("Copy to clipboard: Ctrl+C or Command+C, Enter", text);
+	  }
+	}
+
+	$(document).ready(function() {
+	  // Initialize
+	  // ---------------------------------------------------------------------
+
+	  // Tooltips
+	  // Requires Bootstrap 3 for functionality
+	  $('.js-tooltip').tooltip();
+
+	  // Copy to clipboard
+	  // Grab any text in the attribute 'data-copy' and pass it to the 
+	  // copy function
+	  $('.js-copy').click(function() {
+	    var text = $(this).attr('data-copy');
+	    var el = $(this);
+	    copyToClipboard(text, el);
+	  });
+	});
+ </script>
+ <script type="text/javascript">
+	jQuery(document).ready(function($){
+		$('.ads iframe').iframeTracker({
+			blurCallback: function(event) {
+				// Do something when the iframe is clicked (like firing an XHR request)
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function() {
+				    if (this.readyState == 4 && this.status == 200) {
+				       // Typical action to be performed when the document is ready:
+				    }
+				};
+				xhttp.open("GET", "/ads_clicked/?time=" + new Date().getTime(), true);
+				xhttp.send();
+			}
+		});
+	});
+</script>
+	
+	
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="popover"]').popover()
+})
+</script>
+<link rel="stylesheet" type="text/css" href="./test3_files/prettify.01f71d0ca100.css">
+<script type="text/javascript" src="./test3_files/prettify.f7387b55d316.js.Без названия"></script>
+<script type="text/javascript">
+	PR.prettyPrint()
+</script>
+
+	
+
+ <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="./test3_files/js"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-113193516-3');
+  setTimeout("gtag('event', 'view', {'event_category' : 'page',  'event_label' : '15-seconds-view'})",15000);
+</script>
+
+
+
+
+
+
+
+<app-content ng-version="10.1.2"></app-content><div style="position:fixed; top:0; left:0; overflow:hidden;"><input style="position:absolute; left:-300px;" type="text" value="" id="focus_retriever" readonly="true"></div><!----></body><div></div></html>
