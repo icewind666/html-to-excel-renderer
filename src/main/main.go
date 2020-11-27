@@ -646,7 +646,7 @@ func applyHandlebarsTemplate(templateFilename string, dataFilename string) strin
 		return ""
 	})
 
-	data := jsonCtx[JsonDataRootAttributeName]
+	data := jsonCtx
 	result, err := tpl.Exec(data)
 
 	if err != nil {
