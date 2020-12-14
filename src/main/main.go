@@ -19,7 +19,7 @@ import (
 )
 
 // App version
-const Version = 5
+const Version = 7
 
 // Json root attribute name to get data from
 const JsonDataRootAttributeName = "data"
@@ -343,14 +343,23 @@ func main() {
 
 	if len(os.Args) < 5 {
 		fmt.Println("Usage:", os.Args[0], "hbs_template",  "data_json",
-			"output_excel_file", "batch_size")
+			"output_excel_file", "batch_size", "debug(0|1)")
 		LogFatal("Invalid command line args")
 	}
-
+	debugOn := false
 	filename := os.Args[1]
 	dataFilename := os.Args[2]
 	outputFilename := os.Args[3]
 	batchSize,_ := strconv.Atoi(os.Args[4])
+
+	if len(os.Args) == 6 {
+		debugOnArg,_ := strconv.Atoi(os.Args[5])
+		if debugOnArg == 1 {
+			debugOn = true
+			fmt.Println("debug mode on")
+		}
+	}
+
 
 	start := time.Now()
 	renderedHtml := applyHandlebarsTemplate(filename, dataFilename)
@@ -364,7 +373,9 @@ func main() {
 
 	// Force GC to clear up, should see a memory drop
 	//runtime.GC()
-	//ioutil.WriteFile("rendered.html", []byte(renderedHtml), 0777)
+	if debugOn {
+		ioutil.WriteFile("rendered.html", []byte(renderedHtml), 0777)
+	}
 	generateXlsxFile(renderedHtml, outputFilename, batchSize)
 
 	end = time.Now()
@@ -415,7 +426,6 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 		if xlsxFile == nil {
 			xlsxFile,err = xlsx.OpenFile(excelFilename)
 		}
-
 
 		sheet, err := xlsxFile.AddSheet(sheetName)
 
@@ -626,7 +636,21 @@ func applyHandlebarsTemplate(templateFilename string, dataFilename string) strin
 
 	// register helpers
 	//TODO: we need more helpers
-	tpl.RegisterHelper("math", func(x int, op string,  y int) string {
+	registerAllHelpers(tpl)
+	data := jsonCtx
+	result, err := tpl.Exec(data)
+
+	if err != nil {
+		LogMsg(fmt.Sprintf("Error while appying template %s to json file %s", templateFilename, dataFilename))
+		panic(err)
+	}
+
+	return result
+}
+
+func registerAllHelpers(template *raymond.Template)  {
+	// math
+	template.RegisterHelper("math", func(x int, op string,  y int) string {
 		if op == "+" {
 			result := x + y
 			return fmt.Sprintf("%d", result)
@@ -646,15 +670,46 @@ func applyHandlebarsTemplate(templateFilename string, dataFilename string) strin
 		return ""
 	})
 
-	data := jsonCtx
-	result, err := tpl.Exec(data)
+	// key
+	template.RegisterHelper("key", func(x map[string]interface{}, key string) interface{} {
+		return x[key]
+	})
 
-	if err != nil {
-		LogMsg(fmt.Sprintf("Error while appying template %s to json file %s", templateFilename, dataFilename))
-		panic(err)
-	}
+	// zeroIntHelper
+	template.RegisterHelper("zeroIntHelper", func(x string) string {
+		if x == "" {
+			return "00"
+		}
 
-	return result
+		num,_ := strconv.Atoi(x)
+
+		if num < 10 {
+			return "0" + x
+		}
+
+		return x
+	})
+
+	template.RegisterHelper("percentHelper", func(x string) string {
+		num, err := strconv.ParseFloat(x, 32)
+		if err != nil {
+			return ""
+		}
+		return fmt.Sprintf("%.2f%%", num * 100)
+	})
+
+	template.RegisterHelper("inspectionTimeHelper", func(min string, sec string) string {
+		if min == "" {
+			min = "00"
+		}
+		if sec == "" {
+			sec = "00"
+		}
+		return fmt.Sprintf("%s:%s", min, sec);
+	})
+
+
+
 }
 
 

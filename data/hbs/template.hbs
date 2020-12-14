@@ -1,0 +1,23 @@
+<meta charset="utf-8">
+<link rel="abcd" href="../../styles.css">
+<table data-name="Время реакции">
+    <thead>
+    <tr style="height: 300px">
+        <th colspan="4" class="small-header">Среднее время реакции медработника за {{dateStart}} - {{dateEnd}}</th>
+    </tr>
+    </thead>
+    <tr class="nowrap">
+        <th style="width: 80px; word-wrap: break-word; border-style: solid;">Дата</th>
+        <th style="width: 120px; word-wrap: break-word; border-style: solid;">Среднее время загрузки видео</th>
+        <th style="width: 200px; word-wrap: break-word; border-style: solid;">Среднее время на открытие осмотра</th>
+        <th style="width: 120px; word-wrap: break-word; border-style: solid;">Среднее время на принятие решения</th>
+    </tr>
+{{#each days as |val|}}
+    <tr>
+        <td>{{val.meddata_date}}</td>
+        <td>{{val.avg_load}}</td>
+        <td>{{val.avg_open}}</td>
+        <td>{{val.avg_decision}}</td>
+    </tr>
+{{/each}}
+</table>
