@@ -56,6 +56,7 @@ var XpathThead = xpath.Compile(".//thead/tr")
 var XpathTh = xpath.Compile(".//th")
 var XpathTr = xpath.Compile("./tr")
 var XpathTd = xpath.Compile(".//td")
+var XpathImg = xpath.Compile(".//img")
 
 
 // Parsed style from html element
@@ -534,6 +535,13 @@ func processTableRows(rows []xml.Node, sheet *xlsx.Sheet, headerOffset int,  off
 			} else {
 				xlsxCell.SetStyle(xlsx.NewStyle())
 			}
+
+			//TODO: check image tag
+			//imgs, _ := theadTh.Search(XpathImg)
+			//for _, img := range imgs {
+			//	//load image file and add to cell
+			//	xlsxCell.
+			//}
 
 			xlsxCell.Value = theadTh.Content()
 			colIndex++
