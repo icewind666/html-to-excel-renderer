@@ -7,10 +7,10 @@ import (
 	"github.com/jbowtie/gokogiri"
 	"github.com/jbowtie/gokogiri/xml"
 	"github.com/jbowtie/gokogiri/xpath"
-	"github.com/tealeg/xlsx/v3"
-	"gopkg.in/natefinch/lumberjack.v2"
+	_ "image"
+	_ "image/jpeg"
+	_ "image/png"
 	"io/ioutil"
-	"log"
 	"os"
 	"runtime"
 	"strconv"
@@ -18,11 +18,9 @@ import (
 	"time"
 )
 
-// App version
-const Version = 7
 
-// Json root attribute name to get data from
-const JsonDataRootAttributeName = "data"
+// App version
+const Version = 8
 
 // Multipliers for converting html values to excel
 const PixelsToExcelWidthCoeff = 0.15
@@ -48,7 +46,6 @@ const MinHeightStyleAttr = "min-height"
 const MaxHeightStyleAttr = "max-height"
 const TextVerticalAlignStyleAttrValue = "center"
 const ExcelBorderTypeValue = "thin"
-const DefaultHorizontalAlignment = "left"
 
 
 var XpathTable = xpath.Compile(".//table")
@@ -59,7 +56,7 @@ var XpathTd = xpath.Compile(".//td")
 var XpathImg = xpath.Compile(".//img")
 
 
-// Parsed style from html element
+// Mapped style from html element
 type HtmlStyle struct {
 	TextAlign         string
 	WordWrap          bool
@@ -67,7 +64,7 @@ type HtmlStyle struct {
 	Height            float64
 	BorderInheritance bool
 	BorderStyle       bool
-	FontSize          int
+	FontSize          float64
 	IsBold            bool
 	Colspan           int
 }
@@ -100,16 +97,6 @@ func ReadJsonFile(jsonFilename string) map[string]interface{} {
 	return result
 }
 
-func ReadHbsFile(filename string) string {
-	byteValue, _ := ioutil.ReadFile(filename)
-
-	if byteValue == nil {
-		LogMsg(fmt.Sprintf("File is empty? %s", filename))
-	}
-
-	return string(byteValue)
-}
-
 
 // PrintMemUsage outputs the current, total and OS memory being used. As well as the number
 // of garage collection cycles completed.
@@ -117,11 +104,10 @@ func PrintMemUsage() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
 	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
-	log.Printf("\tAlloc = %v MiB", bToMb(m.Alloc))
-	log.Printf("\tHeapAlloc = %v MiB", bToMb(m.HeapAlloc))
-	log.Printf("\tSys = %v MiB", bToMb(m.Sys))
-	log.Printf("\tFor info on each, see: https://golang.org/pkg/runtime/#MemStats\n")
-
+	LogMsg(fmt.Sprintf("\tAlloc = %v MiB", bToMb(m.Alloc)))
+	LogMsg(fmt.Sprintf("\tHeapAlloc = %v MiB", bToMb(m.HeapAlloc)))
+	LogMsg(fmt.Sprintf("\tSys = %v MiB", bToMb(m.Sys)))
+	LogMsg(fmt.Sprintf("\tFor info on each, see: https://golang.org/pkg/runtime/#MemStats\n"))
 }
 
 
@@ -130,127 +116,15 @@ func bToMb(b uint64) uint64 {
 	return b / 1024 / 1024
 }
 
-// Log + console print
 func LogMsg(s string) {
-	log.Println(s)
+	//TODO: extended logging?
 	fmt.Println(s)
-	//TODO: extend logging not only to file
 }
 
 // Log, print, die
 func LogFatal(s string) {
-	log.Println(s)
+	//TODO: extended logging?
 	fmt.Println(s)
-	os.Exit(1)
-}
-
-// Apply html style to Excel row.
-// Alignment and Border are applied to each cell of the row
-func ApplyRowStyle(row *xlsx.Row, style *HtmlStyle) {
-	if row == nil {
-		return
-	}
-
-	if style.Height > 0 {
-		row.SetHeight(style.Height)
-	} else {
-		row.SetHeight(15) // default
-	}
-
-
-	row.ForEachCell(func(c *xlsx.Cell) error {
-		setAlignment(c.GetStyle(), style)
-		setBorder(c.GetStyle(), style)
-		return nil
-	})
-}
-
-
-// Apply style from html Td to excel Cell
-func ApplyCellStyle(cell *xlsx.Cell, style *HtmlStyle) {
-	if cell == nil {
-		return
-	}
-	currentCellStyle := cell.GetStyle()
-	setFont(currentCellStyle, style)
-	setAlignment(currentCellStyle, style)
-	setBorder(currentCellStyle, style)
-	setColspan(cell, style)
-}
-
-
-// Apply style from html to excel column
-func ApplyColumnStyle(cell *xlsx.Cell, sheet *xlsx.Sheet, colIndex int, style *HtmlStyle) {
-	if cell == nil {
-		return
-	}
-	currentCellStyle := cell.GetStyle()
-	setColspan(cell, style)
-	column := sheet.Col(colIndex-1)
-
-	if column == nil {
-		c := xlsx.NewColForRange(colIndex,colIndex)
-		sheet.SetColParameters(c)
-		columnAgain := sheet.Col(colIndex-1)
-
-		if columnAgain == nil {
-			panic("Error setting column styles")
-		}
-		column = columnAgain
-		column.SetStyle(xlsx.NewStyle())
-	}
-
-	column.GetStyle().Alignment.WrapText = style.WordWrap
-	column.GetStyle().ApplyAlignment = true
-
-	if style.Width > 0 {
-		sheet.SetColWidth(colIndex, colIndex, style.Width)
-	}
-
-	setFont(currentCellStyle, style)
-	setBorder(currentCellStyle, style)
-}
-
-// Merge cells horizontally to apply colspan
-func setColspan(cell *xlsx.Cell, style *HtmlStyle) {
-	if style.Colspan > 1 {
-		cell.Merge(style.Colspan-1, 0)
-	}
-}
-
-// Setup font options for cell
-func setFont(currentCellStyle *xlsx.Style, style *HtmlStyle) {
-	if style.FontSize > 0 {
-		currentCellStyle.Font.Size = float64(style.FontSize)
-	}
-	currentCellStyle.Font.Bold = style.IsBold
-	currentCellStyle.ApplyFont = true
-}
-
-// Setup cell alignment options from style
-func setAlignment(cellStyle *xlsx.Style, style *HtmlStyle) {
-	if style.WordWrap {
-		cellStyle.Alignment.WrapText = style.WordWrap
-	}
-
-	cellStyle.Alignment.Vertical = TextVerticalAlignStyleAttrValue
-	cellStyle.ApplyAlignment = true
-
-	if style.TextAlign != "" {
-		cellStyle.Alignment.Horizontal = style.TextAlign
-	}
-}
-
-// Setup cell border options from html style
-// Border is always set to "thin" value
-func setBorder(cellStyle *xlsx.Style, style *HtmlStyle) {
-	if style.BorderStyle {
-		cellStyle.Border.Top = ExcelBorderTypeValue
-		cellStyle.Border.Bottom = ExcelBorderTypeValue
-		cellStyle.Border.Left = ExcelBorderTypeValue
-		cellStyle.Border.Right = ExcelBorderTypeValue
-		cellStyle.ApplyBorder = true
-	}
 }
 
 // Returns parsed style struct
@@ -258,6 +132,7 @@ func ExtractStyles(node *xml.AttributeNode) *HtmlStyle {
 	if node == nil {
 		return NewHtmlStyle()
 	}
+
 	styleStr := node.Content()
 	entries := strings.Split(styleStr, ";")
 	resultStyle := NewHtmlStyle()
@@ -321,7 +196,8 @@ func ExtractStyles(node *xml.AttributeNode) *HtmlStyle {
 				resultStyle.BorderStyle = value == BorderInheritanceStyleAttrValue
 			case FontSizeStyleAttr:
 				widthEntry := strings.Trim(value, " px")
-				resultStyle.FontSize,_ = strconv.Atoi(widthEntry)
+				sz,_ := strconv.Atoi(widthEntry)
+				resultStyle.FontSize = float64(sz)
 			case FontWeightStyleAttr:
 				resultStyle.IsBold = strings.Contains(value, "bold")
 			}
@@ -331,23 +207,14 @@ func ExtractStyles(node *xml.AttributeNode) *HtmlStyle {
 }
 
 func main() {
-	log.SetOutput(&lumberjack.Logger{
-		Filename:   "html-to-xslx.log",
-		MaxSize:    10, // megabytes
-		MaxBackups: 3,
-		MaxAge:     48, //days
-		Compress:   false, // disabled by default
-	})
-
-	LogMsg("***********************************\n")
-	LogMsg(fmt.Sprintf("HTML-TO-XSLX converter v.%d\n", Version))
-
 	if len(os.Args) < 5 {
 		fmt.Println("Usage:", os.Args[0], "hbs_template",  "data_json",
 			"output_excel_file", "batch_size", "debug(0|1)")
 		LogFatal("Invalid command line args")
 	}
-	debugOn := false
+
+	LogMsg(fmt.Sprintf("HTML-TO-XSLX converter v.%d started", Version))
+	debugOn := false // true turns on writing rendered html to file along with result excel file
 	filename := os.Args[1]
 	dataFilename := os.Args[2]
 	outputFilename := os.Args[3]
@@ -357,14 +224,12 @@ func main() {
 		debugOnArg,_ := strconv.Atoi(os.Args[5])
 		if debugOnArg == 1 {
 			debugOn = true
-			fmt.Println("debug mode on")
+			LogMsg("debug mode on")
 		}
 	}
 
-
 	start := time.Now()
 	renderedHtml := applyHandlebarsTemplate(filename, dataFilename)
-
 	end := time.Now()
 
 	timeResultStr := fmt.Sprintf("Elapsed time (Render Handlebars): %f s\n", end.Sub(start).Seconds())
@@ -372,11 +237,10 @@ func main() {
 	LogMsg("Memory usage after rendering Handlebars.js template")
 	PrintMemUsage()
 
-	// Force GC to clear up, should see a memory drop
-	//runtime.GC()
 	if debugOn {
 		ioutil.WriteFile("rendered.html", []byte(renderedHtml), 0777)
 	}
+
 	generateXlsxFile(renderedHtml, outputFilename, batchSize)
 
 	end = time.Now()
@@ -386,10 +250,18 @@ func main() {
 	PrintMemUsage()
 }
 
+func getExcelizeGenerator() *ExcelizeGenerator {
+	return &ExcelizeGenerator{
+		openedFile:   nil,
+		filename:     "",
+		currentSheet: "",
+		currentCol:   0,
+		currentRow:   0,
+	}
+}
 
 // Parses given html and generated xslt file.
 // File is generated by adding batches of batchSize to in on every iteration.
-// On every iteration xlsx file is freshly opened and then saved with added data
 func generateXlsxFile(html string, outputFilename string, batchSize int) string {
 	start := time.Now()
 	doc, err := gokogiri.ParseHtml([]byte(html))
@@ -404,15 +276,18 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 
 	tables, _ := doc.Root().Search(XpathTable)
 	defer doc.Free()
-	xlsxFile := xlsx.NewFile()
 
-	if xlsxFile == nil {
-		panic("cant create excel file")
-	}
-
+	// creating excel generator
+	generator := getExcelizeGenerator()
 	excelFilename := fmt.Sprintf("%s", outputFilename)
+	generator.filename = excelFilename
+	generator.currentCol = 1
+	generator.currentRow = 1
+	generator.Create()
+
 	start = time.Now()
 	totalRows := 0
+	currentSheetIndex := 0
 
 	// Main cycle through all tables in file
 	for i, table := range tables {
@@ -424,23 +299,18 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 			LogMsg(fmt.Sprintf("Warning! No data-name in for table found. Used %s as sheet name", sheetName))
 		}
 
-		if xlsxFile == nil {
-			xlsxFile,err = xlsx.OpenFile(excelFilename)
+		if currentSheetIndex == 0 {
+			generator.SetSheetName("Sheet1", sheetName)
+		} else {
+			generator.AddSheet(sheetName)
 		}
 
-		sheet, err := xlsxFile.AddSheet(sheetName)
-
-		if err != nil {
-			panic(err)
-		}
-
-		if sheet == nil {
-			LogFatal(fmt.Sprintf("Error: Cant add new sheet to xlsx file. %s", err))
-		}
+		generator.currentCol = 1
+		generator.currentRow = 0
 
 		// Get thead for table and create header in xlsx
 		theadTrs, _ := table.Search(XpathThead)
-		processHtmlTheadTag(theadTrs, sheet)
+		processHtmlTheadTag(theadTrs, generator)
 
 		// Get all rows in html table
 		rows, _ := table.Search(XpathTr)
@@ -448,34 +318,18 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 		packSize := batchSize
 
 		for rowsProceeded < len(rows) {
-			if xlsxFile == nil {
-				xlsxFile,err = xlsx.OpenFile(excelFilename)
-				sheet = xlsxFile.Sheet[sheetName]
-
-				if sheet == nil {
-					sheet, err = xlsxFile.AddSheet(sheetName)
-				}
-			}
-
-			// processing one batch of rows
-			// len(theadTrs) is an offset to skip (table headers)
-			processTableRows(rows, sheet, len(theadTrs), rowsProceeded, packSize)
-
-			err = xlsxFile.Save(excelFilename)
-			xlsxFile = nil // help gc - prevent memory leak :)
-			sheet = nil // help gc - prevent memory leak :)
-
-			if err != nil {
-				panic(err)
-			}
-
+			processTableRows(rows, generator, rowsProceeded, packSize)
 			rowsProceeded += packSize
 			runtime.GC() // prevent memory leak :)
 		}
 
 		totalRows += len(rows) // stored only for log output
 		rows = nil // help gc - prevent memory leak :)
+		currentSheetIndex += 1
+
 	}
+
+	generator.Save(generator.filename)
 
 	if err != nil {
 		LogMsg(fmt.Sprintf("Error: can't save to %s", excelFilename))
@@ -490,7 +344,7 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 
 
 // Process all html table rows
-func processTableRows(rows []xml.Node, sheet *xlsx.Sheet, headerOffset int,  offset int, rowsNumber int) {
+func processTableRows(rows []xml.Node, generator *ExcelizeGenerator, offset int, rowsNumber int) {
 	if offset >= len(rows) {
 		return
 	}
@@ -505,22 +359,15 @@ func processTableRows(rows []xml.Node, sheet *xlsx.Sheet, headerOffset int,  off
 		}
 
 		tr := rows[i]
-		_ = sheet.AddRow()
-
-		xlsxRow, e := sheet.AddRowAtIndex(headerOffset + i)
-
-		if e != nil {
-			LogMsg("Cant add row to excel sheet")
-			panic(e)
-		}
+		generator.AddRow()
 
 		// HEADERS
 		theadTrs, _ := tr.Search(XpathTh)
-		colIndex := 1
+		generator.currentCol = 1
 
 		for _, theadTh := range theadTrs {
 			thStyle := theadTh.Attribute(StyleAttrName)
-			xlsxCell := xlsxRow.AddCell()
+			cellValue := theadTh.Content()
 
 			if thStyle != nil {
 				style := ExtractStyles(thStyle)
@@ -529,86 +376,143 @@ func processTableRows(rows []xml.Node, sheet *xlsx.Sheet, headerOffset int,  off
 				if thColspan != nil {
 					style.Colspan,_ = strconv.Atoi(thColspan.Value())
 				}
-
-				ApplyColumnStyle(xlsxCell, sheet, colIndex, style)
-				ApplyCellStyle(xlsxCell, style)
-			} else {
-				xlsxCell.SetStyle(xlsx.NewStyle())
+				generator.ApplyColumnStyle(style)
+				generator.ApplyCellStyle(style)
 			}
 
-			//TODO: check image tag
-			//imgs, _ := theadTh.Search(XpathImg)
-			//for _, img := range imgs {
-			//	//load image file and add to cell
-			//	xlsxCell.
-			//}
+			imgs, _ := theadTh.Search(XpathImg)
 
-			xlsxCell.Value = theadTh.Content()
-			colIndex++
+			if len(imgs) > 0 {
+				for _, img := range imgs {
+					imgSrc := img.Attribute("src")
+					imgAlt := img.Attribute("alt")
+
+					if _, err := os.Stat(imgSrc.Value()); os.IsNotExist(err) {
+						if err != nil {
+							fmt.Println(err)
+						}
+						generator.SetCellValue(imgAlt.Value())
+					}
+
+					currentCellCoords,errCoords := generator.GetCoords()
+
+					if errCoords != nil {
+						fmt.Println(errCoords)
+					}
+
+					errAdd := generator.openedFile.AddPicture(generator.currentSheet,
+						currentCellCoords,
+						imgSrc.Value(),
+						`{"autofit":true, "positioning": "oneCell"}`)
+					if errAdd != nil {
+						fmt.Println(errAdd)
+					}
+				}
+			} else {
+				if cellValue != "" {
+					generator.SetCellValue(cellValue)
+				}
+			}
+
+			generator.currentCol += 1
 		}
 
 		cells, _ := tr.Search(XpathTd)
+		generator.currentCol = 1
 
+		// Table cells
 		for _, td := range cells {
 			tdStyle := td.Attribute("style")
-			xlsxCell := xlsxRow.AddCell()
+			cellValue := td.Content()
 
 			if tdStyle != nil {
 				cellStyle := ExtractStyles(tdStyle)
-				tdColspan := tdStyle.Attribute(ColspanAttrName)
+				tdColspan := td.Attribute(ColspanAttrName)
 
 				if tdColspan != nil {
 					cellStyle.Colspan,_ = strconv.Atoi(tdColspan.Value())
 				}
 
-				ApplyCellStyle(xlsxCell, cellStyle)
-			} else {
-				xlsxCell.SetStyle(xlsx.NewStyle())
+				generator.ApplyCellStyle(cellStyle)
 			}
 
-			xlsxCell.Value = td.Content()
-			xlsxCell = nil
+			imgs, _ := td.Search(XpathImg)
+
+			if len(imgs) > 0 {
+				for _, img := range imgs {
+					imgSrc := img.Attribute("src")
+					imgAlt := img.Attribute("alt")
+
+					if _, err := os.Stat(imgSrc.Value()); os.IsNotExist(err) {
+						if err != nil {
+							fmt.Println(err)
+						}
+						generator.SetCellValue(imgAlt.Value())
+					}
+
+					currentCellCoords,errCoords := generator.GetCoords()
+
+					if errCoords != nil {
+						fmt.Println(errCoords)
+					}
+
+					errAdd := generator.openedFile.AddPicture(generator.currentSheet,
+						currentCellCoords,
+						imgSrc.Value(),
+						`{"autofit":true, "lock_aspect_ratio": false, "locked": false, "positioning": "oneCell"}`)
+					if errAdd != nil {
+						fmt.Println(errAdd)
+					}
+
+				}
+			} else {
+				if cellValue != "" {
+					generator.SetCellValue(cellValue)
+				}
+			}
+
+			generator.currentCol += 1
 		}
 
 		trStyle := tr.Attribute("style")
 
+		// Apply row style if present
 		if trStyle != nil {
 			styleExtracted := ExtractStyles(trStyle)
-			ApplyRowStyle(xlsxRow, styleExtracted)
-		} else {
-			xlsxRow.SetHeight(15) // default
+			generator.ApplyRowStyle(styleExtracted)
 		}
-
-		xlsxRow = nil
 	}
 }
 
 // Process thead tag (thead->tr + thead->tr->th). Apply column styles. Apply cell styles
-func processHtmlTheadTag(theadTrs []xml.Node, sheet *xlsx.Sheet) {
+func processHtmlTheadTag(theadTrs []xml.Node, generator *ExcelizeGenerator) {
 	for _, theadTr := range theadTrs {
-		xlsxTheadRow := sheet.AddRow()
+		generator.AddRow()
 		theadTrThs, _ := theadTr.Search(XpathTh) // search for <th>
 		colIndex := 1
 
 		for _, theadTh := range theadTrThs { // for each <th> in <tr>
 			thStyle := theadTh.Attribute(StyleAttrName)
-			xlsxCell := xlsxTheadRow.AddCell()
 
 			style := ExtractStyles(thStyle)
-			if style != nil {
-				ApplyColumnStyle(xlsxCell, sheet, colIndex, style)
-				ApplyCellStyle(xlsxCell, style)
-			} else {
-				xlsxCell.SetStyle(xlsx.NewStyle())
-			}
-
 			thColspan := theadTh.Attribute(ColspanAttrName)
 
 			if thColspan != nil {
 				style.Colspan, _ = strconv.Atoi(thColspan.Value())
 			}
 
-			xlsxCell.Value = theadTh.Content()
+			content := theadTh.Content()
+
+			if content != "" {
+				generator.SetCellValue(content)
+			}
+
+			if style != nil {
+				generator.ApplyColumnStyle(style)
+				generator.ApplyCellStyle(style)
+
+			}
+
 			colIndex++
 		}
 
@@ -622,9 +526,7 @@ func processHtmlTheadTag(theadTrs []xml.Node, sheet *xlsx.Sheet) {
 				rowStyle.Colspan, _ = strconv.Atoi(thColspan.Value())
 			}
 			if rowStyle != nil {
-				ApplyRowStyle(xlsxTheadRow, rowStyle)
-			} else {
-				xlsxTheadRow.SetHeight(15) // default
+				generator.ApplyRowStyle(rowStyle)
 			}
 		}
 	}
@@ -643,7 +545,6 @@ func applyHandlebarsTemplate(templateFilename string, dataFilename string) strin
 	}
 
 	// register helpers
-	//TODO: we need more helpers
 	registerAllHelpers(tpl)
 	data := jsonCtx
 	result, err := tpl.Exec(data)

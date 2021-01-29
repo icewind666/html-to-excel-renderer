@@ -36,7 +36,7 @@
                         "eds_driver": "db06a5ff6548c6e03c80ea41c4778768",
                         "timezone": 3,
                         "conclusion": "O",
-                        "graphicsignature": "C:\\medpoint\\tmp\\test.png"
+                        "graphicsignature": "C:\\medpoint\\tmp\\test.jpg"
                     }, {
                         "id": 12144243,
                         "date": "2020-08-28 07:34",
@@ -68,7 +68,8 @@
                         "canceledtype": null,
                         "eds_driver": "52817d9d6394f683b3edfbd65e43c4cc",
                         "timezone": 3,
-                        "conclusion": "O"
+                        "conclusion": "O",
+                        "graphicsignature": "C:\\medpoint\\tmp\\nofile.jpg"
                     }, {
                         "id": 12143599,
                         "date": "2020-08-28 07:22",

@@ -1,28 +1,35 @@
 <meta charset="utf-8">
-    <table data-name="{{tableName}}">
+{{#each pages as |page|}}
+    {{{summarize page}}}
+    <table data-name="{{key page 'sheetName'}}">
         <thead>
-        <tr style="min-height:30px;height:100px;text-align: right"><!-- test that only first height attribute is taken -->
-            <th colspan="6">{{tableHeader}}</th> <!-- colspan test -->
+        <tr class="h-500">
+            <th colspan="20" class="big-header">{{page.name}} {{orgName}}</th>
         </tr>
         </thead>
         <tr style="max-height: 450px; border-style: solid; text-align: right"> <!-- testing max-height is taken as row height + bolder -->
-            <th style="min-width: 80px">№ п/п</th> <!-- test min-width -->
-            <th style="width: 180px; word-wrap: break-word; text-align: right">Дата и время осмотра</th>
-            <th style="width: 200px; word-wrap: break-word; font-weight:bold">Тип осмотра</th>
-            <th style="width: 300px; word-wrap: break-word">Место осмотра</th>
-            <th style="width: 120px; word-wrap: break-word">Табельный номер</th>
-            <th style="width: 200px; word-wrap: break-word; font-size: 20px">ФИО работника</th>
-            <th style="width: 120px; word-wrap: break-word">Комментарий</th>
+            <th style="min-width: 80px; border-style: solid;">№ п/п</th> <!-- test min-width -->
+            <th style="width: 180px;border-style: solid; word-wrap: break-word; text-align: right">Дата и время осмотра</th>
+            <th style="width: 200px;border-style: solid; word-wrap: break-word; font-weight:bold">Тип осмотра</th>
+            <th style="width: 300px;border-style: solid; word-wrap: break-word">Место осмотра</th>
+            <th style="width: 120px;border-style: solid; word-wrap: break-word">Табельный номер</th>
+            <th style="width: 200px;border-style: solid; word-wrap: break-word; font-size: 13px">ФИО работника</th>
+            <th style="width: 120px;border-style: solid; word-wrap: break-word">Комментарий</th>
         </tr>
         {{#each [inspections] as |val|}}
             <tr style="height: 450px; border-style: solid">
-                <td>{{math @index '+' 1}}</td>
-                <td style="text-align: center">{{val.date}}</td>
-                <td style="text-align: right">{{val.type}}</td>
-                <td>{{val.hostname}}</td>
-                <td>{{val.number}}</td>
-                <td style="font-size: 40px">{{val.fio}}</td>
+                <td style="border-style: solid">{{math @index '+' 1}}</td>
+                <td style="text-align: center;border-style: solid">{{val.date}}</td>
+                <td style="text-align: right;border-style: solid">{{val.type}}</td>
+                <td style="border-style: solid">{{val.hostname}}</td>
+                <td style="border-style: solid">{{val.number}}</td>
+                <td style="font-size: 20px">{{val.fio}}</td>
                 <td style="text-align: left; word-wrap: break-word;">{{val.comment}}</td>
+                {{#if val.graphicsignature}}
+                    <td><img src="{{val.graphicsignature}}" alt="{{val.eds_driver}}" /></td>
+                {{ else }}
+                    <td>{{val.eds_driver}}</td>
+                {{/if}}
             </tr>
         {{/each}}
         <tr style="border-inheritance-type: solid;">
@@ -44,3 +51,4 @@
             <td></td>
         </tr>
     </table>
+{{/each}}
