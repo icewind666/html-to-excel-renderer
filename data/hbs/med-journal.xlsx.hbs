@@ -52,7 +52,7 @@
                 <td>{{val.allow}}</td>
                 <td style="text-align: left; word-wrap: break-word;">{{val.comment}}</td>
                 <td>{{val.fiomedic}}</td>
-                <td>{{val.eds_code}}</td>
+                <td colspan="4">{{val.eds_code}}</td>
                 {{#if val.graphicsignature}}
                     <td><img src="{{val.graphicsignature}}" alt="{{val.eds_driver}}" /></td>
                 {{ else }}
@@ -80,7 +80,7 @@
     </tr>
     </thead>
     <tr style="border-style: solid">
-        <th style="width: 80px; word-wrap: break-word">№ п/п</th>
+        <th style="width: 80px; word-wrap: break-word" >№ п/п</th>
         <th style="width: 120px; word-wrap: break-word;">Табельный номер</th>
         <th style="width: 200px; word-wrap: break-word;">ФИО работника</th>
         <th style="width: 120px; word-wrap: break-word;">Количество осмотров</th>
