@@ -38,7 +38,7 @@ debug - 1 или 0. 1 - включает режим отладки. Больше
  **https://github.com/jbowtie/gokogiri**
  
  Для генерации Excel:
- **https://github.com/tealeg/xlsx**
+ **github.com/360EntSecGroup-Skylar/excelize/v2**
  
  
  #### Описание работы
