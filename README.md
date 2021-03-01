@@ -1,7 +1,11 @@
  # html-to-xslx
  
- #### TODOs
- - В шаблонах стили, примененные к строкам - перенести в ячейки (!)
+ #### install
+ > wget https://github.com/icewind666/html-to-excel-render/releases/download/v1.0.2/html-to-excel-render_v1.0.2.tar.gz
+
+ > tar -xvf html-to-excel-render_v1.0.2.tar.gz
+
+ > sudo mv html-to-excel-render /usr/bin
 
  
 ## Описание 
