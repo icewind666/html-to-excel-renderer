@@ -1,5 +1,9 @@
  # html-to-xslx
  
+ Dependencies: 
+ libxml2-dev
+(sudo apt-get install libxml2-dev)
+ 
  #### install
  > wget https://github.com/icewind666/html-to-excel-render/releases/download/v1.0.2/html-to-excel-render_v1.0.2.tar.gz
 
@@ -95,15 +99,3 @@ debug - 1 или 0. 1 - включает режим отладки. Больше
 
 
 
-
-## Описание возвращаемых ошибок
-
-#### Invalid arguments
-
-#### Cant save file
-
-#### Arguments not found
-
-[github.com/aymerick/raymond]: http://github.com/aymerick/raymond
-
-[asdasd]: http://github.com/aymerick/raymond
