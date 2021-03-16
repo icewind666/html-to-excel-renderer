@@ -5,7 +5,7 @@
 Npm package contains 2 scripts - postinstall and preuninstall - they are downloading binaries and use go-npm 
 (https://www.npmjs.com/package/go-npm) to install them
 
-` npm install -g html-to-excel-renderer`
+` npm install -g go-html-to-excel-renderer`
  
  
 
