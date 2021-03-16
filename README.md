@@ -8,7 +8,6 @@ Npm package contains 2 scripts - postinstall and preuninstall - they are downloa
 ` npm install -g html-to-excel-renderer`
  
  
- 
 
  ## Install via downloading binaries
  On releases page choose your binary (https://github.com/icewind666/html-to-excel-renderer/releases)
@@ -46,7 +45,6 @@ Run command be like:
 **output** - report output
 
 **batch_size** - how match rows to process in one iteration
-
 
 **debug** - 1 or 0. 
 
