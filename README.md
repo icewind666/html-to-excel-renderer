@@ -26,11 +26,14 @@
 
 `> go build -o html-to-excel-renderer .\src\main\main.go`
 
-Запуск
+Run command be like:
+
 
 `./html-to-excel-renderer <template> <data> <output> <batch_size> <debug>`
 
+
 `> ./html-to-excel-renderer template.hbs data.json result.xslx 5000 0`
+
 
 **template** - handlebars template file (hbs)
 
@@ -62,16 +65,16 @@ For Handlebars.js template rendering:
  
  Command line arguments:
  
-  Template file (hbs)
+  - Template file (hbs)
   
-  Data file (json)
+  - Data file (json)
   
-  Output file
+  - Output file
   
  
  Constants in code:
-  PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go) Transform coeff from pixels to excel width
+  - PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go) Transform coeff from pixels to excel width
  
-  PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go) - Transform coeff from pixels to excel height
+  - PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go) - Transform coeff from pixels to excel height
   
  
