@@ -1,7 +1,11 @@
  # html-to-excel-renderer
 
+
+
  ## install via npm
  npm install -g html-to-excel-renderer
+ 
+ 
  
 
  ## install via downloading binaries
@@ -15,6 +19,7 @@
  > tar -xvf html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz
 
  > sudo mv html-to-excel-renderer_v1.1.0_linux_amd64/html-to-excel-renderer /usr/bin
+
 
 
 ## install via source building
