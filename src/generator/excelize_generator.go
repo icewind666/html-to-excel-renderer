@@ -1,23 +1,24 @@
-package main
+package generator
 
 import (
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/icewind666/html-to-excel-render/src/types"
 )
 
 /**
 
  */
 type ExcelizeGenerator struct {
-	openedFile *excelize.File
-	filename string
-	currentSheet string
-	currentCol int
-	currentRow int
+	OpenedFile   *excelize.File
+	Filename     string
+	CurrentSheet string
+	CurrentCol   int
+	CurrentRow   int
 }
 
 func (x *ExcelizeGenerator) Create() {
-	x.openedFile = excelize.NewFile()
+	x.OpenedFile = excelize.NewFile()
 }
 
 
@@ -29,14 +30,18 @@ func (x *ExcelizeGenerator) Open(filename string) bool {
 		return false
 	}
 
-	x.openedFile = f
-	x.currentCol = 0 // current X in worksheet
-	x.currentRow = 0 // current Y in worksheet
+	x.OpenedFile = f
+	x.CurrentCol = 0 // current X in worksheet
+	x.CurrentRow = 0 // current Y in worksheet
 	return true
 }
 
 func (x *ExcelizeGenerator) Save(filename string) {
-	x.openedFile.SaveAs(filename)
+	err := x.OpenedFile.SaveAs(filename)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
 
 /**
@@ -44,10 +49,9 @@ func (x *ExcelizeGenerator) Save(filename string) {
 Adds new sheet and makes it active
  */
 func (x *ExcelizeGenerator) AddSheet(sheetName string) {
-
-	index := x.openedFile.NewSheet(sheetName)
-	x.openedFile.SetActiveSheet(index)
-	x.currentSheet = sheetName
+	index := x.OpenedFile.NewSheet(sheetName)
+	x.OpenedFile.SetActiveSheet(index)
+	x.CurrentSheet = sheetName
 }
 
 /**
@@ -55,16 +59,17 @@ func (x *ExcelizeGenerator) AddSheet(sheetName string) {
 Adds new sheet and makes it active
 */
 func (x *ExcelizeGenerator) SetSheetName(oldSheetName string, sheetName string) {
-	x.openedFile.SetSheetName(oldSheetName, sheetName)
-	x.currentSheet = sheetName
+	x.OpenedFile.SetSheetName(oldSheetName, sheetName)
+	x.CurrentSheet = sheetName
 }
 
 /**
 Adds new sheet and makes it active
 */
 func (x *ExcelizeGenerator) AddRow() {
-	x.currentRow += 1
-	err := x.openedFile.InsertRow(x.currentSheet, x.currentRow)
+	x.CurrentRow += 1
+	err := x.OpenedFile.InsertRow(x.CurrentSheet, x.CurrentRow)
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -72,11 +77,11 @@ func (x *ExcelizeGenerator) AddRow() {
 }
 
 func (x *ExcelizeGenerator) GetSheetAtIndex(index int) string {
-	return x.openedFile.GetSheetName(index)
+	return x.OpenedFile.GetSheetName(index)
 }
 
 func (x *ExcelizeGenerator) GetCurrentRow() int {
-	return x.currentRow
+	return x.CurrentRow
 }
 
 /**
@@ -89,47 +94,57 @@ func (x *ExcelizeGenerator) AddCell() {
 /**
 Set font size and font bold
  */
-func (x *ExcelizeGenerator) SetCellFont(style *HtmlStyle)  {
-	newStyle, err := x.openedFile.NewStyle(FontToExcelizeString(style))
+func (x *ExcelizeGenerator) SetCellFont(style *types.HtmlStyle)  {
+	newStyle, err := x.OpenedFile.NewStyle(FontToExcelizeString(style))
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	cell := x.GetCell()
-	x.openedFile.SetCellStyle(x.currentSheet, cell, cell, newStyle)
+	err = x.OpenedFile.SetCellStyle(x.CurrentSheet, cell, cell, newStyle)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func (x *ExcelizeGenerator) GetCell() string {
-	return fmt.Sprintf("%d%d", x.currentCol, x.currentRow)
+	return fmt.Sprintf("%d%d", x.CurrentCol, x.CurrentRow)
 }
 
 func (x *ExcelizeGenerator) SetRowHeight(rowHeight int) {
-	x.openedFile.SetRowHeight(x.currentSheet, x.currentRow, float64(rowHeight))
+	err := x.OpenedFile.SetRowHeight(x.CurrentSheet, x.CurrentRow, float64(rowHeight))
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func (x ExcelizeGenerator) GetCoords() (string,error) {
-	return excelize.CoordinatesToCellName(x.currentCol, x.currentRow)
+	return excelize.CoordinatesToCellName(x.CurrentCol, x.CurrentRow)
 }
 
 /**
 Sets cospan style for column.
-Current column indexes are taken from currentRow & currentCol of  ExcelizeGenerator
+Current column indexes are taken from CurrentRow & CurrentCol of  ExcelizeGenerator
 instance
  */
 func (x *ExcelizeGenerator) SetColspan(endColumnNumber int) {
-	endColumnIndex := x.currentCol + endColumnNumber-1
-	endColumnName,err := excelize.CoordinatesToCellName(endColumnIndex, x.currentRow)
+	endColumnIndex := x.CurrentCol + endColumnNumber-1
+	endColumnName,err := excelize.CoordinatesToCellName(endColumnIndex, x.CurrentRow)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	currentCellName,err := excelize.CoordinatesToCellName(x.currentCol, x.currentRow)
+	currentCellName,err := excelize.CoordinatesToCellName(x.CurrentCol, x.CurrentRow)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	err = x.openedFile.MergeCell(x.currentSheet, currentCellName, endColumnName)
+	err = x.OpenedFile.MergeCell(x.CurrentSheet, currentCellName, endColumnName)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -138,38 +153,42 @@ func (x *ExcelizeGenerator) SetColspan(endColumnNumber int) {
 /**
 Returns style for current cell
  */
-func (x *ExcelizeGenerator) GetCellStyle() HtmlStyle {
-	index,err := x.openedFile.GetCellStyle(x.currentSheet, x.GetCell())
+func (x *ExcelizeGenerator) GetCellStyle() types.HtmlStyle {
+	index,err := x.OpenedFile.GetCellStyle(x.CurrentSheet, x.GetCell())
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	xlsxXf := x.openedFile.Styles.CellXfs.Xf[index]
+	xlsxXf := x.OpenedFile.Styles.CellXfs.Xf[index]
 	fontID := xlsxXf.FontID // font id in inner style table of workbook
 	borderID := xlsxXf.BorderID
-	font := x.openedFile.Styles.Fonts.Font[*fontID]
+	font := x.OpenedFile.Styles.Fonts.Font[*fontID]
 	isBold := font.B // bold
 	fontSize := font.Sz.Val
 	horizontalAlignment := xlsxXf.Alignment.Horizontal // horizontal cell alignment
 	wrapWords := xlsxXf.Alignment.WrapText
 
-	cellName,err := excelize.CoordinatesToCellName(x.currentCol, x.currentRow)
+	cellName,err := excelize.CoordinatesToCellName(x.CurrentCol, x.CurrentRow)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	width,err := x.openedFile.GetColWidth(x.currentSheet, cellName)
+	width,err := x.OpenedFile.GetColWidth(x.CurrentSheet, cellName)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	rowHeight,err := x.openedFile.GetRowHeight(x.currentSheet, x.currentRow)
+	rowHeight,err := x.OpenedFile.GetRowHeight(x.CurrentSheet, x.CurrentRow)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	isBordered := false
-	border := x.openedFile.Styles.Borders.Border[*borderID]
+	border := x.OpenedFile.Styles.Borders.Border[*borderID]
 
 	if border.Outline || border.DiagonalDown || border.DiagonalUp || border.Bottom.Style != "" || border.Top.Style != "" ||
 		border.Left.Style != "" || border.Right.Style != "" {
@@ -177,10 +196,10 @@ func (x *ExcelizeGenerator) GetCellStyle() HtmlStyle {
 	}
 
 	//TODO: parse colspan from merged cells
-	//mergedCells := x.openedFile.GetMergeCells()
+	//mergedCells := x.OpenedFile.GetMergeCells()
 
 
-	htmlStyle := HtmlStyle{
+	htmlStyle := types.HtmlStyle{
 		TextAlign:         horizontalAlignment,
 		WordWrap:          wrapWords,
 		Width:             width,
@@ -198,26 +217,26 @@ func (x *ExcelizeGenerator) GetCellStyle() HtmlStyle {
 /**
 Returns alignment json string
  */
-func (x *ExcelizeGenerator) getCellAlignment(style *HtmlStyle) string{
+func (x *ExcelizeGenerator) getCellAlignment(style *types.HtmlStyle) string{
 	return AlignmentToExcelizeString(style)
 }
 
 /**
 Returns aligment json string
 */
-func (x *ExcelizeGenerator) getCellFont(style *HtmlStyle) string{
+func (x *ExcelizeGenerator) getCellFont(style *types.HtmlStyle) string{
 	return FontToExcelizeString(style)
 }
 
 /**
 Returns border json string
 */
-func (x *ExcelizeGenerator) getCellBorders(style *HtmlStyle) string{
+func (x *ExcelizeGenerator) getCellBorders(style *types.HtmlStyle) string{
 	return BordersToExcelizeString(style)
 }
 
 
-func (x *ExcelizeGenerator) ApplyCellStyle(style *HtmlStyle) {
+func (x *ExcelizeGenerator) ApplyCellStyle(style *types.HtmlStyle) {
 	styleJson := fmt.Sprintf(`
 				{
 					"font": %s,
@@ -232,16 +251,20 @@ func (x *ExcelizeGenerator) ApplyCellStyle(style *HtmlStyle) {
 				)
 
 
-	newStyle, err := x.openedFile.NewStyle(styleJson)
-	if err != nil {
-		fmt.Println(err)
-	}
-	cell,err := excelize.CoordinatesToCellName(x.currentCol, x.currentRow)
+	newStyle, err := x.OpenedFile.NewStyle(styleJson)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	err = x.openedFile.SetCellStyle(x.currentSheet, cell, cell, newStyle)
+	cell,err := excelize.CoordinatesToCellName(x.CurrentCol, x.CurrentRow)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = x.OpenedFile.SetCellStyle(x.CurrentSheet, cell, cell, newStyle)
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -252,7 +275,7 @@ func (x *ExcelizeGenerator) ApplyCellStyle(style *HtmlStyle) {
 
 }
 
-func (x *ExcelizeGenerator) ApplyRowStyle(style *HtmlStyle) {
+func (x *ExcelizeGenerator) ApplyRowStyle(style *types.HtmlStyle) {
 	if style.Height > 0 {
 		x.SetRowHeight(int(style.Height))
 	} else {
@@ -260,35 +283,35 @@ func (x *ExcelizeGenerator) ApplyRowStyle(style *HtmlStyle) {
 	}
 }
 
-func (x *ExcelizeGenerator) ApplyColumnStyle(style *HtmlStyle) {
+func (x *ExcelizeGenerator) ApplyColumnStyle(style *types.HtmlStyle) {
 	styleJson := fmt.Sprintf(`{"alignment": %s}`,
 		x.getCellAlignment(style),
 	)
 
-	newStyle, err := x.openedFile.NewStyle(styleJson)
+	newStyle, err := x.OpenedFile.NewStyle(styleJson)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	colName,err := excelize.ColumnNumberToName(x.currentCol)
+	colName,err := excelize.ColumnNumberToName(x.CurrentCol)
 
 	if style.Width > 0 {
-		err := x.openedFile.SetColWidth(x.currentSheet, colName, colName, style.Width)
+		err := x.OpenedFile.SetColWidth(x.CurrentSheet, colName, colName, style.Width)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 	}
 
-	err = x.openedFile.SetColStyle(x.currentSheet, colName, newStyle)
+	err = x.OpenedFile.SetColStyle(x.CurrentSheet, colName, newStyle)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
 func (x *ExcelizeGenerator) SetCellValue(value interface{}) {
-	cellName,_ := excelize.CoordinatesToCellName(x.currentCol,x.currentRow)
-	err := x.openedFile.SetCellValue(x.currentSheet, cellName, value)
+	cellName,_ := excelize.CoordinatesToCellName(x.CurrentCol,x.CurrentRow)
+	err := x.OpenedFile.SetCellValue(x.CurrentSheet, cellName, value)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -304,7 +327,7 @@ func (x *ExcelizeGenerator) SetCellValue(value interface{}) {
         "color": "#777777"
     }
  */
-func FontToExcelizeString(style *HtmlStyle) string  {
+func FontToExcelizeString(style *types.HtmlStyle) string  {
 	isBold := "false"
 	if style.IsBold {
 		isBold = "true"
@@ -325,7 +348,7 @@ func FontToExcelizeString(style *HtmlStyle) string  {
         "wrap_text": true
     }
 */
-func AlignmentToExcelizeString(style *HtmlStyle) string {
+func AlignmentToExcelizeString(style *types.HtmlStyle) string {
 	isWrapped := "false"
 	if style.WordWrap {
 		isWrapped = "true"
@@ -369,7 +392,7 @@ func AlignmentToExcelizeString(style *HtmlStyle) string {
 ],
 
  */
-func BordersToExcelizeString(style *HtmlStyle) string {
+func BordersToExcelizeString(style *types.HtmlStyle) string {
 	if style.BorderStyle {
 		return `[
 			{

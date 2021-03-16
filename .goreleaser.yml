@@ -1,11 +1,32 @@
-# .goreleaser.yml
-# Build customization
+# This is an example .goreleaser.yml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
 builds:
-  - binary: html_to_excel
-    main: ./src/main/main.go
+  - env:
+      - CGO_ENABLED=1
     goos:
-      - windows
-      - darwin
       - linux
+      - windows
     goarch:
       - amd64
+      - 386
+    main: ./src/main/main.go
+
+archives:
+  - replacements:
+      linux: Linux
+      windows: Windows
+      386: i386
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-snapshot"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
