@@ -1,101 +1,77 @@
- # html-to-xslx
+ # html-to-excel-renderer
+
+ #### install via npm
+ npm install -g html-to-excel-renderer
  
+
+ #### install via downloading binaries
+ On releases page choose your binary (https://github.com/icewind666/html-to-excel-render/releases)
+ 
+ Then download it, unpack and put to accessible location
+ (below is an example for linux_amd64)
+ 
+ > wget https://github.com/icewind666/html-to-excel-render/releases/download/v1.1.0/html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz
+
+ > tar -xvf html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz
+
+ > sudo mv html-to-excel-renderer_v1.1.0_linux_amd64/html-to-excel-renderer /usr/bin
+
+
+#### install via source building
+
  Dependencies: 
  libxml2-dev
 (sudo apt-get install libxml2-dev)
  
- #### install
- > wget https://github.com/icewind666/html-to-excel-render/releases/download/v1.0.2/html-to-excel-render_v1.0.2.tar.gz
 
- > tar -xvf html-to-excel-render_v1.0.2.tar.gz
-
- > sudo mv html-to-excel-render /usr/bin
-
- 
-## Описание 
-
-
-Сборка
-
-`> go build -o html-to-xslx.exe src/main`
+`> go build -o html-to-excel-renderer .\src\main\main.go`
 
 Запуск
 
-`html-to-xlsx.exe <template> <data> <output> <batch_size> <debug>`
+`./html-to-excel-renderer <template> <data> <output> <batch_size> <debug>`
 
-`> html-to-xlsx.exe template.hbs data.json result.xslx 5000 0`
+`> ./html-to-excel-renderer template.hbs data.json result.xslx 5000 0`
 
-**template** - файл шаблона (hbs)
+**template** - handlebars template file (hbs)
 
-**data** - файл данных (json)
+**data** - report data file (json)
 
-**output** - выходной файл эксель
+**output** - report output
 
-**batch_size** - кол-во строк, которые будут взяты за одну итерацию
+**batch_size** - how match rows to process in one iteration
 
-debug - 1 или 0. 1 - включает режим отладки. Больше сообщений в логах + отрендеренный html пишется в файл
- rendered.html рядом с бинарником.
+debug - 1 or 0. 
+
+1 - debug mode on. writes rendered.html file with rendered templates.
+0 - debug mode off.
 
 ----
-#### Внешние библиотеки
+#### 3rd party libs
 
-Для рендеринга шаблонов Handlebars.js используется:
+For Handlebars.js template rendering:
 **https://github.com/aymerick/raymond**
 
- Для парсинга html:
+ For html parsing:
  **https://github.com/jbowtie/gokogiri**
  
- Для генерации Excel:
+ For XLSX generation Excel:
  **github.com/360EntSecGroup-Skylar/excelize/v2**
  
  
- #### Описание работы
- Консольное приложение.
+ #### Description
  
- На вход, в командной строке передаются:
+ Command line arguments:
  
-  файл шаблона (hbs)
+  Template file (hbs)
   
-  файл данных (json)
+  Data file (json)
   
-  выходной файл эксель
-  
-  
- Коэффициент перевода пикселей в ширину эксель (а там она в символах текущей темы и шрифта)
- находится в константе PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go)
- 
- Коэффициент перевода пикселей в высоту эксель (а там она в символах текущей темы и шрифта)
- находится в константе PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go)
+  Output file
   
  
+ Constants in code:
+  PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go) Transform coeff from pixels to excel width
  
+  PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go) - Transform coeff from pixels to excel height
+  
  
-  ## Поддерживаемые стили при экспорте в XLSX
-  #### Строки таблицы \<tr>
- | Поле             | Допустимые значения |         Примечание         |
- | ---------------- | :-----------------: | :-------------------------:|
- | height, min-height, max-height | от 1px до 100500px  | При выводе на excel указанное число делится на 10. Размер может быть только один в перечисленном приоритете |
- | text-align  | 'center', 'left', 'right', 'justify' | Настраивается только горизонтальное расположение, вертикальное всегда middle |
- | word-wrap   | break-word          | Разрешает перенос строк |
-  #### Столбцы таблицы \<th>
- | Поле              | Допустимые значения |         Примечание         |
- | ----------------- | :-----------------: | :-------------------------:|
- | width, min-width, max-width | от 1px до 100500px  | При выводе на excel указанное число делится на 10. Размер может быть только один в перечисленном приоритете |
- | text-align  | center, left, right, justify | Настраивается только горизонтальное расположение, вертикальное всегда middle |
- | word-wrap   | break-word          | Разрешает перенос строк |
- | border-style| solid  | Ставит в xlsx обводку всех ячеек в строке черной тонкой |
- | font-weight   |  любое          | Делает текст жирным |
- | font-size   | от 1 до N          | Устанавливает размер шрифта |
- | colspan     |  от 1 до N          | Мержит указанное количество ячеек начиная с текущей. Парсер пока не умеет корректно работать с смерженными ячейками.  Пустые ячейки нужно указывать явно в шаблоне, иначе произойдет перезаписывание. |
-  #### Ячейки таблицы \<td>
- | Поле             | Допустимые значения |         Примечание         |
- | ---------------- | :-----------------: | :-------------------------:|
- | text-align  | center, left, right, justify | Настраивается только горизонтальное расположение, вертикальное всегда middle |
- | word-wrap   | break-word          | Разрешает перенос строк |
- | border-style| solid  | Ставит в xlsx обводку всех ячеек в строке черной тонкой |
- | font-weight   |  любое          | Делает текст жирным |
- | font-size   | от 1 до N          | Устанавливает размер шрифта |
- | colspan     |  от 1 до N          | Мержит указанное количество ячеек начиная с текущей. Парсер пока не умеет корректно работать с смерженными ячейками.  Пустые ячейки нужно указывать явно в шаблоне, иначе произойдет перезаписывание. |
-
-
-
