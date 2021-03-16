@@ -5,12 +5,12 @@
  
 
  ## install via downloading binaries
- On releases page choose your binary (https://github.com/icewind666/html-to-excel-render/releases)
+ On releases page choose your binary (https://github.com/icewind666/html-to-excel-renderer/releases)
  
  Then download it, unpack and put to accessible location
  (below is an example for linux_amd64)
  
- > wget https://github.com/icewind666/html-to-excel-render/releases/download/v1.1.0/html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz
+ > wget https://github.com/icewind666/html-to-excel-renderer/releases/download/v1.1.0/html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz
 
  > tar -xvf html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz
 
