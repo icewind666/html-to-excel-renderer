@@ -1,10 +1,10 @@
  # html-to-excel-renderer
 
- #### install via npm
+ ## install via npm
  npm install -g html-to-excel-renderer
  
 
- #### install via downloading binaries
+ ## install via downloading binaries
  On releases page choose your binary (https://github.com/icewind666/html-to-excel-render/releases)
  
  Then download it, unpack and put to accessible location
@@ -17,7 +17,7 @@
  > sudo mv html-to-excel-renderer_v1.1.0_linux_amd64/html-to-excel-renderer /usr/bin
 
 
-#### install via source building
+## install via source building
 
  Dependencies: 
  libxml2-dev
