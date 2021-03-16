@@ -48,6 +48,14 @@ debug - 1 or 0.
 1 - debug mode on. writes rendered.html file with rendered templates.
 0 - debug mode off.
 
+
+ 
+ Constants in code:
+  - PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go) Transform coeff from pixels to excel width
+ 
+  - PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go) - Transform coeff from pixels to excel height
+
+
 ----
 #### 3rd party libs
 
@@ -61,20 +69,5 @@ For Handlebars.js template rendering:
  **github.com/360EntSecGroup-Skylar/excelize/v2**
  
  
- #### Description
  
- Command line arguments:
- 
-  - Template file (hbs)
-  
-  - Data file (json)
-  
-  - Output file
-  
- 
- Constants in code:
-  - PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go) Transform coeff from pixels to excel width
- 
-  - PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go) - Transform coeff from pixels to excel height
-  
  
