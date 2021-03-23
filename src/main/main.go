@@ -23,14 +23,11 @@ import (
 
 
 var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
-	builtBy = "unknown"
+	version = "1.1.3"
+	commit  = "-"
+	date    = "03-2021"
+	builtBy = "v.korennoj"
 )
-
-// App version
-const Version = 9
 
 // Multipliers for converting html values to excel
 const PixelsToExcelWidthCoeff = 0.15
@@ -56,6 +53,7 @@ const MinHeightStyleAttr = "min-height"
 const MaxHeightStyleAttr = "max-height"
 const TextVerticalAlignStyleAttrValue = "center"
 const ExcelBorderTypeValue = "thin"
+const TextVerticalAlignStyleAttr = "vertical-align" // values can be: top | middle | bottom | baseline
 
 
 var XpathTable = xpath.Compile(".//table")
@@ -73,7 +71,7 @@ func main() {
 		LogFatal("Invalid command line args")
 	}
 
-	LogMsg(fmt.Sprintf("html-to-excel-renderer %s, commit %s, built at %s by %s", version, commit, date, builtBy))
+	LogMsg(fmt.Sprintf("html-to-excel-renderer v%s, commit %s, built at %s by %s", version, commit, date, builtBy))
 	debugOn := false // true turns on writing rendered html to file along with result excel file
 	filename := os.Args[1]
 	dataFilename := os.Args[2]
@@ -124,6 +122,7 @@ func NewHtmlStyle() *types.HtmlStyle {
 		FontSize:          0,
 		IsBold:            false,
 		Colspan:           0,
+		VerticalAlign:     "",
 	}
 }
 
@@ -209,13 +208,13 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 	tables, _ := doc.Root().Search(XpathTable)
 	defer doc.Free()
 
-	// creating excel generator
-	generator := getExcelizeGenerator()
+	// creating excel excelizeGenerator
+	excelizeGenerator := getExcelizeGenerator()
 	excelFilename := fmt.Sprintf("%s", outputFilename)
-	generator.Filename = excelFilename
-	generator.CurrentCol = 1
-	generator.CurrentRow = 1
-	generator.Create()
+	excelizeGenerator.Filename = excelFilename
+	excelizeGenerator.CurrentCol = 1
+	excelizeGenerator.CurrentRow = 1
+	excelizeGenerator.Create()
 
 	start = time.Now()
 	totalRows := 0
@@ -232,17 +231,17 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 		}
 
 		if currentSheetIndex == 0 {
-			generator.SetSheetName("Sheet1", sheetName)
+			excelizeGenerator.SetSheetName("Sheet1", sheetName)
 		} else {
-			generator.AddSheet(sheetName)
+			excelizeGenerator.AddSheet(sheetName)
 		}
 
-		generator.CurrentCol = 1
-		generator.CurrentRow = 0
+		excelizeGenerator.CurrentCol = 1
+		excelizeGenerator.CurrentRow = 0
 
 		// Get thead for table and create header in xlsx
 		theadTrs, _ := table.Search(XpathThead)
-		processHtmlTheadTag(theadTrs, generator)
+		processHtmlTheadTag(theadTrs, excelizeGenerator)
 
 		// Get all rows in html table
 		rows, _ := table.Search(XpathTr)
@@ -250,7 +249,7 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 		packSize := batchSize
 
 		for rowsProceeded < len(rows) {
-			processTableRows(rows, generator, rowsProceeded, packSize)
+			processTableRows(rows, excelizeGenerator, rowsProceeded, packSize)
 			rowsProceeded += packSize
 			runtime.GC() // prevent memory leak :)
 		}
@@ -260,7 +259,7 @@ func generateXlsxFile(html string, outputFilename string, batchSize int) string 
 		currentSheetIndex += 1
 	}
 
-	generator.Save(generator.Filename)
+	excelizeGenerator.Save(excelizeGenerator.Filename)
 
 	end = time.Now()
 	LogMsg(fmt.Sprintf("Total elapsed time (main cycle): %f s\n", end.Sub(start).Seconds()))
@@ -582,7 +581,11 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 
 			case FontWeightStyleAttr:
 				resultStyle.IsBold = strings.Contains(value, "bold")
+
+			case TextVerticalAlignStyleAttr:
+				resultStyle.VerticalAlign = value
 			}
+
 		}
 	}
 	return resultStyle

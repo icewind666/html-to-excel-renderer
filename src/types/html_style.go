@@ -10,4 +10,5 @@ type HtmlStyle struct {
 	FontSize          float64
 	IsBold            bool
 	Colspan           int
+	VerticalAlign     string
 }

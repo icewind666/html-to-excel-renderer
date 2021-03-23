@@ -353,7 +353,7 @@ func AlignmentToExcelizeString(style *types.HtmlStyle) string {
 	if style.WordWrap {
 		isWrapped = "true"
 	}
-	return fmt.Sprintf(`{"horizontal": "%s","wrap_text": %s}`, style.TextAlign, isWrapped)
+	return fmt.Sprintf(`{"horizontal": "%s","wrap_text": %s, "vertical": %s}`, style.TextAlign, isWrapped, style.VerticalAlign)
 }
 
 
