@@ -1,5 +1,7 @@
 package main
 
+import "github.com/icewind666/html-to-excel-renderer/src/types"
+
 // Html style constants
 const StyleAttrName = "style"
 const ColspanAttrName = "colspan"
@@ -24,4 +26,11 @@ const TextVerticalAlignStyleAttr = "vertical-align" // values can be: top | midd
 const TextVerticalAlignStyleMiddle = "center"
 const TextVerticalAlignStyleTop = "top"
 const TextVerticalAlignStyleBottom = "bottom"
+const ValueTypeAttrName = "cell-type"
 
+const(
+	FloatValueType types.ValueType = "float"
+	StringValueType types.ValueType = "string"
+	DateValueType types.ValueType = "date"
+	BooleanValueType types.ValueType = "bool"
+)

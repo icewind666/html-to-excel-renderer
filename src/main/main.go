@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/aymerick/raymond"
@@ -13,6 +14,7 @@ import (
 	"github.com/jbowtie/gokogiri/xpath"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
+	"image"
 	_ "image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -342,12 +344,26 @@ func addImageToCell(img xml.Node, generator *generator.ExcelizeGenerator) {
 		log.WithError(errCoords).Errorln(errCoords)
 	}
 
-	log.Infoln("width: ", i)
+	file, _ := ioutil.ReadFile(imgSrc.Value())
+	imgConfig, _, errImg := image.DecodeConfig(bytes.NewReader(file))
+
+	if errImg != nil {
+		log.WithError(errImg).Println("error img")
+	}
+
+	log.Println(imgConfig.Width)
+	log.Println(imgConfig.Height)
+
+	width,_ := generator.OpenedFile.GetColWidth(generator.CurrentSheet, generator.GetCell())
+	log.Println("width = ", width)
+
+	height,_ := generator.OpenedFile.GetRowHeight(generator.CurrentSheet, generator.CurrentRow)
+	log.Println("height = ", height)
 
 	errAdd := generator.OpenedFile.AddPicture(generator.CurrentSheet,
 		currentCellCoords,
 		imgSrc.Value(),
-		`{"autofit":true, "lock_aspect_ratio": true}`)
+		`{"autofit":true, "lock_aspect_ratio": true, "positioning": "oneCell"}`)
 	if errAdd != nil {
 		log.Printf(errAdd.Error())
 	}
@@ -374,7 +390,19 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 			content := theadTh.Content()
 
 			if content != "" {
-				generator.SetCellValue(content)
+				if style.CellValueType == FloatValueType {
+					floatContent,err := strconv.ParseFloat(content, 64)
+
+					if err != nil {
+						log.WithError(err).Error("Cant parse cell type")
+					}
+
+					generator.SetCellFloatValue(floatContent)
+				}
+
+				if style.CellValueType == StringValueType {
+					generator.SetCellValue(content)
+				}
 			}
 
 			if style != nil {
@@ -534,6 +562,15 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 					value = "center" // excelize lib dont understand middle :) center works fine
 				}
 				resultStyle.VerticalAlign = value
+			case ValueTypeAttrName:
+				cellType := types.ValueType(value)
+				switch cellType { // filter only supported types
+				case FloatValueType:
+				case StringValueType:
+				case DateValueType:
+				case BooleanValueType:
+					resultStyle.CellValueType = cellType
+				}
 			}
 
 		}

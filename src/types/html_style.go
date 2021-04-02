@@ -1,4 +1,8 @@
 package types
+
+// Cell formatting type indication
+type ValueType string
+
 // Mapped style from html element
 type HtmlStyle struct {
 	TextAlign         string
@@ -11,4 +15,5 @@ type HtmlStyle struct {
 	IsBold            bool
 	Colspan           int
 	VerticalAlign     string
+	CellValueType	  ValueType
 }

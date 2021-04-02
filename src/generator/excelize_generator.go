@@ -251,6 +251,23 @@ func (x *ExcelizeGenerator) SetCellValue(value string) {
 	}
 }
 
+func (x *ExcelizeGenerator) SetCellFloatValue(value float64) {
+	cellName,_ := excelize.CoordinatesToCellName(x.CurrentCol,x.CurrentRow)
+	err := x.OpenedFile.SetCellFloat(x.CurrentSheet, cellName, value, 3, 64)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+}
+
+func (x *ExcelizeGenerator) SetCellIntValue(value int) {
+	cellName,_ := excelize.CoordinatesToCellName(x.CurrentCol,x.CurrentRow)
+	err := x.OpenedFile.SetCellInt(x.CurrentSheet, cellName, value)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+}
+
+
 
 /**
 	"font": {
