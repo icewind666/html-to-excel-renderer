@@ -27,7 +27,7 @@ func New() *Config {
 		},
 		DebugMode: getEnvAsBool("DebugMode", true),
 		BatchSize: getEnvAsInt("BatchSize", 10000),
-		LogLevel: getEnv("LogLevel", "info"),
+		LogLevel: getEnv("GoRenderLogLevel", "info"),
 	}
 }
 

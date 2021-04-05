@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/aymerick/raymond"
@@ -14,7 +13,6 @@ import (
 	"github.com/jbowtie/gokogiri/xpath"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	"image"
 	_ "image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -27,9 +25,8 @@ import (
 
 
 var (
-	version = "1.1.4"
-	commit  = "-"
-	date    = "28.03.2021"
+	version = "1.1.5"
+	date    = "04.04.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -46,7 +43,7 @@ var conf = config.New()
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Infoln("No .env file found. Using default values")
+		log.Infoln("No separate .env file specified. Using values from environment")
 	}
 
 	conf = config.New()
@@ -54,7 +51,7 @@ func main() {
 	logLevel,err := log.ParseLevel(conf.LogLevel)
 
 	if err != nil {
-		log.Warn("Cannot parse conf level, default to INFO")
+		log.Warn("Cannot parse debug level, default to INFO")
 	} else {
 		log.SetLevel(logLevel)
 	}
@@ -64,7 +61,7 @@ func main() {
 		log.Fatalln("Invalid command line arguments")
 	}
 
-	log.Infof("html-to-excel-renderer v%s, commit %s, built at %s by %s", version, commit, date, builtBy)
+	log.Infof("html-to-excel-renderer v%s, built at %s by %s", version, date, builtBy)
 
 	debugOn := conf.DebugMode
 
@@ -73,15 +70,13 @@ func main() {
 	}
 
 	batchSize := conf.BatchSize
-	log.Infoln("Batch size: ", batchSize)
-
 	filename := os.Args[1]
 	dataFilename := os.Args[2]
 	outputFilename := os.Args[3]
 
 	renderedHtml := applyHandlebarsTemplate(filename, dataFilename)
 
-	log.Infoln("Rendering Handlebars.js template is done")
+	log.Infoln("Rendering Handlebars.js template to html is done")
 	PrintMemUsage()
 
 	if debugOn {
@@ -93,6 +88,7 @@ func main() {
 
 	generateXlsxFile(renderedHtml, outputFilename, batchSize)
 	PrintMemUsage()
+	log.Infoln("All done")
 }
 
 
@@ -343,22 +339,6 @@ func addImageToCell(img xml.Node, generator *generator.ExcelizeGenerator) {
 	if errCoords != nil {
 		log.WithError(errCoords).Errorln(errCoords)
 	}
-
-	file, _ := ioutil.ReadFile(imgSrc.Value())
-	imgConfig, _, errImg := image.DecodeConfig(bytes.NewReader(file))
-
-	if errImg != nil {
-		log.WithError(errImg).Println("error img")
-	}
-
-	log.Println(imgConfig.Width)
-	log.Println(imgConfig.Height)
-
-	width,_ := generator.OpenedFile.GetColWidth(generator.CurrentSheet, generator.GetCell())
-	log.Println("width = ", width)
-
-	height,_ := generator.OpenedFile.GetRowHeight(generator.CurrentSheet, generator.CurrentRow)
-	log.Println("height = ", height)
 
 	errAdd := generator.OpenedFile.AddPicture(generator.CurrentSheet,
 		currentCellCoords,

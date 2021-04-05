@@ -215,7 +215,40 @@ func (x *ExcelizeGenerator) ApplyRowStyle(style *types.HtmlStyle) {
 		x.SetRowHeight(15) // default
 	}
 
+	//rows,err := x.OpenedFile.GetRows(x.CurrentSheet)
+	//if err != nil {
+	//	log.WithError(err).Errorln("Cant get rows")
+	//	return
+	//}
+	//
+	//row := rows[x.CurrentRow-1]
+	//styleJson := fmt.Sprintf(`
+	//			{
+	//				"font": %s,
+	//
+	//				"border": %s,
+	//
+	//				"alignment": %s
+	//			}`,
+	//	x.getCellFont(style),
+	//	x.getCellBorders(style),
+	//	x.getCellAlignment(style),
+	//)
+	//
+	//
+	//newStyle, err := x.OpenedFile.NewStyle(styleJson)
+	//
+	//if err != nil {
+	//	log.WithError(err).Error("Cant create new style in Excel sheet")
+	//}
+	//
+	//for _, colCell := range row {
+	//	err = x.OpenedFile.SetCellStyle(x.CurrentSheet, colCell, colCell, newStyle)
+	//}
+	//
+
 }
+
 
 func (x *ExcelizeGenerator) ApplyColumnStyle(style *types.HtmlStyle) {
 	styleJson := fmt.Sprintf(`{"alignment": %s}`,
