@@ -15,27 +15,28 @@ Npm package contains 2 scripts - postinstall and preuninstall - they are downloa
  Then download it, unpack and put to accessible location
  (below is an example for linux_amd64)
  
- `wget https://github.com/icewind666/html-to-excel-renderer/releases/download/v1.1.0/html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz`
+ `wget https://github.com/icewind666/html-to-excel-renderer/releases/download/v1.1.5/html-to-excel-renderer_v1.1.5_linux_x86_64.tar.gz`
 
- `tar -xvf html-to-excel-renderer_v1.1.0_linux_amd64.tar.gz`
+ `tar -xvf html-to-excel-renderer_v1.1.5_linux_x86_64.tar.gz`
 
- `sudo mv html-to-excel-renderer_v1.1.0_linux_amd64/html-to-excel-renderer /usr/bin`
+
+ `sudo mv html-to-excel-renderer_v1.1.5_linux_x86_64/html-to-excel-renderer /usr/bin`
 
 
 ## Install from source building
 
  Dependencies: 
- `libxml2-dev`
-(`sudo apt-get install libxml2-dev`)
+ `libxml2-dev`, `libc6-dev`
+(`sudo apt-get install libxml2-dev libc6-dev`)
  
 
-`go build -o html-to-excel-renderer .\src\main\main.go`
+`go build -o html-to-excel-renderer github.com/icewind666/html-to-excel-renderer/src/main `
 
 Run command be like:
 
-`html-to-excel-renderer <template> <data> <output> <batch_size> <debug>`
+`html-to-excel-renderer <template> <data> <output>`
 
-`html-to-excel-renderer template.hbs data.json result.xslx 5000 0`
+Example: `html-to-excel-renderer template.hbs data.json result.xslx`
 
 
 **template** - handlebars template file (hbs)
@@ -44,23 +45,17 @@ Run command be like:
 
 **output** - report output
 
-**batch_size** - how match rows to process in one iteration
 
-**debug** - 1 or 0. 
+## Environment settings
 
-1 - debug mode on. writes rendered.html file with rendered templates.
+| Variable      | Description   |
+| ------------- |:-------------|
+| BatchSize     | Number of rows to process on one iteration. Applies to each sheet |
+| PxToExcelWidthMultiplier     | Multiplier used to map pixels in html to width in excel |
+| PxToExcelHeightMultiplier     | Multiplier used to map pixels in html to height in excel |
+| DebugMode     | Enables writing temporary html file with rendered content. File is NOT removed but overwritten every run |
+| GoRenderLogLevel     | Log level. Default is info |
 
-0 - debug mode off.
-
-
- ---
- Constants in code:
-  - PIXELS_TO_EXCEL_WIDTH_COEFF (main/utils.go) Transform coeff from pixels to excel width
- 
-  - PIXELS_TO_EXCEL_HEIGHT_COEFF (main/utils.go) - Transform coeff from pixels to excel height
-
-
-----
 ## 3rd party libs
 
 For Handlebars.js template rendering:
@@ -70,8 +65,13 @@ For Handlebars.js template rendering:
  **https://github.com/jbowtie/gokogiri**
  
  For XLSX generation Excel:
- **github.com/360EntSecGroup-Skylar/excelize/v2**
- 
+ **https://github.com/360EntSecGroup-Skylar/excelize/v2**
+
+Loading env variables:
+**https://github.com/joho/godotenv**
+
+For logs:
+**https://github.com/sirupsen/logrus**
  
  
  
