@@ -30,7 +30,7 @@ var (
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
-// Search strings for html tags
+// XpathTable Search strings for html tags
 var XpathTable = xpath.Compile(".//table")
 var XpathThead = xpath.Compile(".//thead/tr")
 var XpathTh = xpath.Compile(".//th")
@@ -42,6 +42,7 @@ var XpathImg = xpath.Compile(".//img")
 var conf = config.New()
 
 func main() {
+
 	if err := godotenv.Load(); err != nil {
 		log.Infoln("No separate .env file specified. Using values from environment")
 	}
