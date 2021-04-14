@@ -1,9 +1,9 @@
 package types
 
-// Cell formatting type indication
+// ValueType Cell formatting type indication
 type ValueType string
 
-// Mapped style from html element
+// HtmlStyle Mapped style from html element
 type HtmlStyle struct {
 	TextAlign         string
 	WordWrap          bool

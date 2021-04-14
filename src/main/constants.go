@@ -62,7 +62,6 @@ const ValueTypeAttrName = "cell-type"
 
 const(
 	FloatValueType types.ValueType = "float"
-	StringValueType types.ValueType = "string"
-	DateValueType types.ValueType = "date"
 	BooleanValueType types.ValueType = "bool"
+	StringValueType types.ValueType = "string"
 )

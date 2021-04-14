@@ -105,11 +105,11 @@ func NewHtmlStyle() *types.HtmlStyle {
 		IsBold:            false,
 		Colspan:           0,
 		VerticalAlign:     "",
+		CellValueType: StringValueType
 	}
 }
 
-
-// Reads and unmarshalls json from file
+// ReadJsonFile Reads and unmarshalls json from file
 func ReadJsonFile(jsonFilename string) map[string]interface{} {
 	byteValue, _ := ioutil.ReadFile(jsonFilename)
 
@@ -271,6 +271,7 @@ func processTableRows(rows []xml.Node, generator *generator.ExcelizeGenerator, o
 				}
 			} else {
 				if cellValue != "" {
+
 					generator.SetCellValue(cellValue)
 				}
 			}
@@ -285,11 +286,12 @@ func processTableRows(rows []xml.Node, generator *generator.ExcelizeGenerator, o
 		for _, td := range cells {
 			tdStyle := td.Attribute("style")
 			cellValue := td.Content()
+			cellValueType := StringValueType
 
 			if tdStyle != nil {
 				cellStyle := ExtractStyles(tdStyle)
 				tdColspan := td.Attribute(ColspanAttrName)
-
+				cellValueType = cellStyle.CellValueType
 				if tdColspan != nil {
 					cellStyle.Colspan,_ = strconv.Atoi(tdColspan.Value())
 				}
@@ -305,7 +307,25 @@ func processTableRows(rows []xml.Node, generator *generator.ExcelizeGenerator, o
 				}
 			} else {
 				if cellValue != "" {
-					generator.SetCellValue(cellValue)
+					switch cellValueType {
+					case FloatValueType:
+						floatContent,err := strconv.ParseFloat(cellValue, 64)
+
+						if err != nil {
+							log.WithError(err).Error("Cant parse cell type")
+						}
+
+						generator.SetCellFloatValue(floatContent)
+					case BooleanValueType:
+						boolContent, err := strconv.ParseBool(cellValue)
+
+						if err != nil {
+							log.WithError(err).Error("Cant parse bool value from string")
+						}
+						generator.SetCellBoolValue(boolContent)
+					default:
+						generator.SetCellValue(cellValue)
+					}
 				}
 			}
 
@@ -371,7 +391,8 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 			content := theadTh.Content()
 
 			if content != "" {
-				if style.CellValueType == FloatValueType {
+				switch style.CellValueType {
+				case FloatValueType:
 					floatContent,err := strconv.ParseFloat(content, 64)
 
 					if err != nil {
@@ -379,9 +400,14 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 					}
 
 					generator.SetCellFloatValue(floatContent)
-				}
+				case BooleanValueType:
+					boolContent, err := strconv.ParseBool(content)
 
-				if style.CellValueType == StringValueType {
+					if err != nil {
+						log.WithError(err).Error("Cant parse bool value from string")
+					}
+					generator.SetCellBoolValue(boolContent)
+				default:
 					generator.SetCellValue(content)
 				}
 			}
@@ -412,7 +438,6 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 
 
 // Apply Handlebars template to json data in dataFilename file.
-// Note: takes content by "data" key
 func applyHandlebarsTemplate(templateFilename string, dataFilename string) string {
 	jsonCtx := ReadJsonFile(dataFilename)
 	tpl, err := raymond.ParseFile(templateFilename)
