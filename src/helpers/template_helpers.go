@@ -2,8 +2,10 @@ package helpers
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func MathHelper(x int, op string,  y int) string {
@@ -130,7 +132,7 @@ func LineSumRowsHelper(obj map[string]interface{}) interface{} {
 		allCount, goodLine, badLine)
 }
 
-func FaceIdNotFoundNameHelpder(name string, surname string, patronymic string) string {
+func FaceIdNotFoundNameHelper(name string, surname string, patronymic string) string {
 	if name != "" {
 		return fmt.Sprintf("%s %s %s", surname, name, patronymic)
 	}
@@ -204,3 +206,134 @@ func afterSumRows(obj map[string]interface{}) interface{} {
         <tr style="height: 300px; border-style: solid;"><td colspan="4" style="text-align: left">Итого не прошло послесменный: </td><td></td><td></td><td></td><td>%d</td></tr>`,
 		allCount, goodAfter, goodAftershift, badAfter, badAftershift)
 }
+
+func FormatDate(dateStr string) string {
+	if dateStr == "" {
+		return ""
+	}
+	parsedDate, err := time.Parse("2006-01-02", dateStr)
+
+	if err != nil {
+		log.WithError(err).Error("Cant parse date from string")
+	}
+
+	formattedDate := parsedDate.Format("02-01-2006")
+	return formattedDate
+}
+
+func FormatDateOfBirth(dateStr string) string {
+	return FormatDate(dateStr)
+}
+
+func FormatGender (gender string) string {
+	if gender == "MALE" {
+		return "М"
+	}
+	return "Ж"
+}
+
+func FormatDateTime (dateStr string) string {
+	if dateStr == "" {
+		return ""
+	}
+	parsedDate, err := time.Parse("2006-01-02 15:04", dateStr)
+
+	if err != nil {
+		log.WithError(err).Error("Cant parse date from string")
+	}
+
+	formattedDate := parsedDate.Format("02-01-2006\n15:04")
+	return formattedDate
+}
+
+func FormatOrganization (obj map[string]interface{}) interface{} {
+	return obj["name"].(string)
+}
+
+func FormatType (inspectionType string) string {
+	result := "Неизвестный"
+
+	switch inspectionType {
+		case "BEFORE": {
+			result = "Предрейсовый"
+			break
+		}
+		case "BEFORE_SHIFT": {
+			result = "Предсменный"
+			break
+		}
+		case "LINE": {
+			result = "Линейный"
+			break
+		}
+		case "AFTER": {
+			result = "Послерейсовый"
+			break
+		}
+		case "AFTER_SHIFT": {
+			result = "Послесменный"
+			break
+		}
+		case "ALCO": {
+			result = "Алкотестирование"
+			break
+		}
+		case "PIRO": {
+			result = "Контроль температуры"
+			break
+		}
+		case "PREVENTION": {
+			result = "Профилактический"
+			break
+		}
+	}
+
+	return result
+}
+
+func FormatResult(result bool) string {
+	if result {
+		return "Допуск"
+	}
+	return "Не допуск"
+}
+
+func FormatComplains(complains string) string {
+	if complains == "" {
+		return "-"
+	}
+	if complains == "true" {
+		return "Есть"
+	}
+
+	return "Нет"
+}
+
+func DashOrData (data interface{}) interface{}{
+	if data == nil {
+		return "-"
+	}
+	return data
+}
+
+func FormatPressure (obj map[string]interface{}) interface{} {
+	if obj == nil {
+		return "- / -"
+	}
+	systolic := DashOrData(obj["systolicPressure"])
+	diastolic := DashOrData(obj["diastolicPressure"])
+	result := fmt.Sprintf("%d / %d", systolic, diastolic)
+	return result
+}
+
+func Sleep(sleep string) string {
+	if sleep == "" {
+		return "-"
+	}
+	if sleep == "true" {
+		return "более 8 часов"
+	}
+
+	return "менее 8 часов"
+}
+

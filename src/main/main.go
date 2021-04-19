@@ -105,7 +105,7 @@ func NewHtmlStyle() *types.HtmlStyle {
 		IsBold:            false,
 		Colspan:           0,
 		VerticalAlign:     "",
-		CellValueType: StringValueType
+		CellValueType: StringValueType,
 	}
 }
 
@@ -472,12 +472,21 @@ func registerAllHelpers(template *raymond.Template)  {
 	template.RegisterHelper("isAfterBeforeSheet", helpers.IsAfterBeforeSheetHelper)
 	template.RegisterHelper("summarize", helpers.SummarizeHelper)
 	template.RegisterHelper("lineSumRows", helpers.LineSumRowsHelper)
-	template.RegisterHelper("faceIdNotFoundName", helpers.FaceIdNotFoundNameHelpder)
+	template.RegisterHelper("faceIdNotFoundName", helpers.FaceIdNotFoundNameHelper)
+	template.RegisterHelper("formatDate", helpers.FormatDate)
+	template.RegisterHelper("formatDateOfBirth", helpers.FormatDateOfBirth)
+	template.RegisterHelper("formatGender", helpers.FormatGender)
+	template.RegisterHelper("formatDateTime", helpers.FormatDateTime)
+	template.RegisterHelper("formatOrganization", helpers.FormatOrganization)
+	template.RegisterHelper("formatType", helpers.FormatType)
+	template.RegisterHelper("formatResult", helpers.FormatResult)
+	template.RegisterHelper("formatComplaints", helpers.FormatComplains)
+	template.RegisterHelper("dashOrData", helpers.DashOrData)
+	template.RegisterHelper("formatPressure", helpers.FormatPressure)
+	template.RegisterHelper("sleep", helpers.Sleep)
 }
 
-
-
-// Returns parsed style struct
+// ExtractStyles Returns parsed style struct
 func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 	if node == nil {
 		return NewHtmlStyle()
@@ -572,8 +581,6 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 				cellType := types.ValueType(value)
 				switch cellType { // filter only supported types
 				case FloatValueType:
-				case StringValueType:
-				case DateValueType:
 				case BooleanValueType:
 					resultStyle.CellValueType = cellType
 				}
