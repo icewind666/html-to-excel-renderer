@@ -275,19 +275,23 @@ func BordersToExcelizeString(style *types.HtmlStyle) string {
 		return `[
 			{
 				"type": "left",
-				"style": 1
+				"style": 1,
+				"color":"#000000"
 			},
 			{
 				"type": "top",
-				"style": 1
+				"style": 1,
+				"color":"#000000"
 			},
 			{
 				"type": "bottom",
-				"style": 1
+				"style": 1,
+				"color":"#000000"
 			},
 			{
 				"type": "right",
-				"style": 1
+				"style": 1,
+				"color":"#000000"
 			}]`
 	}
 	return "[]"
