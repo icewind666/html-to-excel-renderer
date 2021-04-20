@@ -7,7 +7,7 @@ Npm package contains 2 scripts - postinstall and preuninstall - they are downloa
 
 ` npm install -g go-html-to-excel-renderer`
  
- 
+
 
  ## Install via downloading binaries
  On releases page choose your binary (https://github.com/icewind666/html-to-excel-renderer/releases)
@@ -18,7 +18,6 @@ Npm package contains 2 scripts - postinstall and preuninstall - they are downloa
  `wget https://github.com/icewind666/html-to-excel-renderer/releases/download/v1.1.5/html-to-excel-renderer_v1.1.5_linux_x86_64.tar.gz`
 
  `tar -xvf html-to-excel-renderer_v1.1.5_linux_x86_64.tar.gz`
-
 
  `sudo mv html-to-excel-renderer_v1.1.5_linux_x86_64/html-to-excel-renderer /usr/bin`
 
