@@ -22,7 +22,7 @@ func MathHelper(x int, op string,  y int) string {
 	if op == "/" && y != 0 {
 		result = float64(x / y)
 	}
-	return fmt.Sprintf("%f", result)
+	return fmt.Sprintf("%0.f", result)
 }
 
 func KeyHelper(x map[string]interface{}, key string) interface{} {
