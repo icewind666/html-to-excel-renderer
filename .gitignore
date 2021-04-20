@@ -7,3 +7,9 @@ build/
 
 *.exe
 data/
+
+result.xlsx
+
+dist/
+
+*.xlsx

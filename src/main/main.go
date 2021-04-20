@@ -25,8 +25,8 @@ import (
 
 
 var (
-	version = "1.1.5"
-	date    = "04.04.2021"
+	version = "1.1.6"
+	date    = "20.04.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
