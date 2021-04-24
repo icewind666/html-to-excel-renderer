@@ -11,6 +11,7 @@ import (
 	"github.com/jbowtie/gokogiri"
 	"github.com/jbowtie/gokogiri/xml"
 	"github.com/jbowtie/gokogiri/xpath"
+	"github.com/jessevdk/go-flags"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 	_ "image"
@@ -25,8 +26,8 @@ import (
 
 
 var (
-	version = "1.1.6"
-	date    = "20.04.2021"
+	version = "1.1.7"
+	date    = "24.04.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -41,14 +42,28 @@ var XpathImg = xpath.Compile(".//img")
 
 var conf = config.New()
 
-func main() {
+var opts struct {
+	UseHandleBars bool `long:"handlebars" description:"Use Handlebars template engine"`
+	Output string `short:"o" long:"output" description:"Output xslx filepath" required:"true"`
+	TemplateFile string `short:"t" long:"template" description:"A handlebars template file" value-name:"FILE"`
+	DataFile string `short:"d" long:"data" description:"A json data file" value-name:"FILE"`
+	HtmlFile string `short:"f" long:"html" description:"Html rendered source file" value-name:"FILE"`
+}
 
+
+func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Infoln("No separate .env file specified. Using values from environment")
 	}
 
 	conf = config.New()
 	log.SetOutput(os.Stdout)
+	_,err := flags.Parse(&opts)
+
+	if err != nil {
+		log.WithError(err).Error("Cant parse command line arguments")
+	}
+
 	logLevel,err := log.ParseLevel(conf.LogLevel)
 
 	if err != nil {
@@ -57,10 +72,11 @@ func main() {
 		log.SetLevel(logLevel)
 	}
 
-	if len(os.Args) < 4 {
-		log.Errorln("Usage:", os.Args[0], "<hbs_template> <data_json> <output_excel_file>")
-		log.Fatalln("Invalid command line arguments")
-	}
+	useHandlebars := opts.UseHandleBars
+	template := opts.TemplateFile
+	htmlFile := opts.HtmlFile
+	data := opts.DataFile
+	output := opts.Output
 
 	log.Infof("html-to-excel-renderer v%s, built at %s by %s", version, date, builtBy)
 
@@ -71,13 +87,25 @@ func main() {
 	}
 
 	batchSize := conf.BatchSize
-	filename := os.Args[1]
-	dataFilename := os.Args[2]
-	outputFilename := os.Args[3]
+	renderedHtml := ""
 
-	renderedHtml := applyHandlebarsTemplate(filename, dataFilename)
+	if useHandlebars {
+		renderedHtml = applyHandlebarsTemplate(template, data)
 
-	log.Infoln("Rendering Handlebars.js template to html is done")
+		log.Infoln("Rendering Handlebars.js template to html is done")
+
+		if debugOn {
+			err := ioutil.WriteFile("rendered.html", []byte(renderedHtml), 0777)
+			if err != nil {
+				log.WithError(err).Error("Cant write debug info (rendered.html)")
+			}
+		}
+	} else {
+		renderedHtml = ReadHtmlFile(htmlFile)
+		log.Infoln("Reading html is done")
+	}
+
+
 	PrintMemUsage()
 
 	if debugOn {
@@ -87,7 +115,7 @@ func main() {
 		}
 	}
 
-	generateXlsxFile(renderedHtml, outputFilename, batchSize)
+	generateXlsxFile(renderedHtml, output, batchSize)
 	PrintMemUsage()
 	log.Infoln("All done")
 }
@@ -125,6 +153,19 @@ func ReadJsonFile(jsonFilename string) map[string]interface{} {
 	}
 
 	return result
+}
+
+func ReadHtmlFile(htmlFilename string) string {
+	byteValue, _ := ioutil.ReadFile(htmlFilename)
+	if htmlFilename == "" {
+		log.Fatalln("Html file is not specified")
+	}
+
+	if byteValue == nil {
+		log.Fatalf("Html file is empty? %s", htmlFilename)
+	}
+
+	return string(byteValue)
 }
 
 
