@@ -25,8 +25,8 @@ func New() *Config {
 			PxToExcelWidthMultiplier: getEnvAsFloat64("PxToExcelWidthMultiplier", 0.15),
 			PxToExcelHeightMultiplier:   getEnvAsFloat64("PxToExcelHeightMultiplier", 0.10),
 		},
-		DebugMode: getEnvAsBool("DebugMode", true),
-		BatchSize: getEnvAsInt("BatchSize", 10000),
+		DebugMode: getEnvAsBool("DebugMode", false),
+		BatchSize: getEnvAsInt("BatchSize", 20000),
 		LogLevel: getEnv("GoRenderLogLevel", "info"),
 	}
 }
