@@ -13,3 +13,9 @@ result.xlsx
 dist/
 
 *.xlsx
+
+rendered.html
+
+result.xslx
+
+rr.xslx

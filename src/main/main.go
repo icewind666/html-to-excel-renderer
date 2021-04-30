@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aymerick/raymond"
-	"github.com/icewind666/html-to-excel-renderer/src/config"
 	"github.com/icewind666/html-to-excel-renderer/src/generator"
 	"github.com/icewind666/html-to-excel-renderer/src/helpers"
 	"github.com/icewind666/html-to-excel-renderer/src/types"
@@ -39,33 +38,28 @@ var XpathTr = xpath.Compile("./tr")
 var XpathTd = xpath.Compile(".//td")
 var XpathImg = xpath.Compile(".//img")
 
-
-var conf = config.New()
-
 var opts struct {
 	UseHandleBars bool `long:"handlebars" description:"Use Handlebars template engine"`
 	Output string `short:"o" long:"output" description:"Output xslx filepath" required:"true"`
 	TemplateFile string `short:"t" long:"template" description:"A handlebars template file" value-name:"FILE"`
 	DataFile string `short:"d" long:"data" description:"A json data file" value-name:"FILE"`
 	HtmlFile string `short:"f" long:"html" description:"Html rendered source file" value-name:"FILE"`
+	BatchSize int `short:"b" long:"batch-size" description:"Max rows for one iteration. Smaller size leads to smaller amount of memory used"`
+	PxWidthToExcel float64 `long:"px-width" description:"Multiplier used to map pixels in html to width in excel"`
+	PxHeightToExcel float64 `long:"px-height" description:"Multiplier used to map pixels in html to height in excel"`
+	DebugMode bool `long:"debug" description:"Enable debug mode"`
+	LogLevel string `long:"log-level" description:"Log level(info, warn, debug...)"`
 }
 
 
 func main() {
-	conf = config.New()
 	log.SetOutput(os.Stdout)
+	log.Infof("html-to-excel-renderer v%s, built at %s by %s", version, date, builtBy)
+
 	_,err := flags.Parse(&opts)
 
 	if err != nil {
 		log.WithError(err).Error("Cant parse command line arguments")
-	}
-
-	logLevel,err := log.ParseLevel(conf.LogLevel)
-
-	if err != nil {
-		log.Warn("Cannot parse debug level, default to INFO")
-	} else {
-		log.SetLevel(logLevel)
 	}
 
 	useHandlebars := opts.UseHandleBars
@@ -73,16 +67,25 @@ func main() {
 	htmlFile := opts.HtmlFile
 	data := opts.DataFile
 	output := opts.Output
-
-	log.Infof("html-to-excel-renderer v%s, built at %s by %s", version, date, builtBy)
-
-	debugOn := conf.DebugMode
-
-	if debugOn {
-		log.Infoln("Debug mode is ON")
+	debugMode := opts.DebugMode
+	batchSize := opts.BatchSize
+	if batchSize <= 0 {
+		batchSize = 10000
 	}
 
-	batchSize := conf.BatchSize
+	logLevel,err := log.ParseLevel(opts.LogLevel)
+
+	if err != nil {
+		log.Warn("Debug level set to info (default value)")
+		log.SetLevel(log.InfoLevel)
+	} else {
+		log.SetLevel(logLevel)
+	}
+
+	if debugMode {
+		log.Infoln("Debug mode is ON (will write rendered.html file in folder where binary is located, CAN CAUSE FILE LOCKS!)")
+	}
+
 	renderedHtml := ""
 
 	if useHandlebars {
@@ -562,42 +565,42 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 			case WidthStyleAttr:
 				widthEntry := strings.Trim(value, " px")
 				widthInt, _ := strconv.Atoi(widthEntry)
-				translatedWidth := float64(widthInt) * conf.SizeTransform.PxToExcelWidthMultiplier
+				translatedWidth := float64(widthInt) * opts.PxWidthToExcel
 				resultStyle.Width = translatedWidth
 
 			case MinWidthStyleAttr:
 				if resultStyle.Width <= 0 {
 					widthEntry := strings.Trim(value, " px")
 					widthInt, _ := strconv.Atoi(widthEntry)
-					translatedWidth := float64(widthInt) * conf.SizeTransform.PxToExcelWidthMultiplier
+					translatedWidth := float64(widthInt) * opts.PxWidthToExcel
 					resultStyle.Width = translatedWidth
 				}
 			case MaxWidthStyleAttr:
 				if resultStyle.Width <= 0 {
 					widthEntry := strings.Trim(value, " px")
 					widthInt, _ := strconv.Atoi(widthEntry)
-					translatedWidth := float64(widthInt) * conf.SizeTransform.PxToExcelWidthMultiplier
+					translatedWidth := float64(widthInt) * opts.PxWidthToExcel
 					resultStyle.Width = translatedWidth
 				}
 
 			case HeightStyleAttr:
 				heightEntry := strings.Trim(value, " px")
 				heightInt, _ := strconv.Atoi(heightEntry)
-				translatedHeight := float64(heightInt) * conf.SizeTransform.PxToExcelHeightMultiplier
+				translatedHeight := float64(heightInt) * opts.PxHeightToExcel
 				resultStyle.Height = translatedHeight
 
 			case MinHeightStyleAttr:
 				if resultStyle.Height <= 0 {
 					heightEntry := strings.Trim(value, " px")
 					heightInt, _ := strconv.Atoi(heightEntry)
-					translatedHeight := float64(heightInt) * conf.SizeTransform.PxToExcelHeightMultiplier
+					translatedHeight := float64(heightInt) * opts.PxHeightToExcel
 					resultStyle.Height = translatedHeight
 				}
 			case MaxHeightStyleAttr:
 				if resultStyle.Height <= 0 {
 					heightEntry := strings.Trim(value, " px")
 					heightInt, _ := strconv.Atoi(heightEntry)
-					translatedHeight := float64(heightInt) * conf.SizeTransform.PxToExcelHeightMultiplier
+					translatedHeight := float64(heightInt) * opts.PxHeightToExcel
 					resultStyle.Height = translatedHeight
 				}
 			case BorderStyleAttr:
