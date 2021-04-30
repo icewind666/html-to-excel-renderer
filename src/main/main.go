@@ -19,7 +19,9 @@ import (
 	_ "image/png"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"runtime"
+	//"runtime/pprof"
 	"strconv"
 	"strings"
 )
@@ -52,6 +54,15 @@ var opts struct {
 
 
 func main() {
+		//f, err := os.Create("cpu.test")
+		//if err != nil {
+		//	log.Fatal("could not create CPU profile: ", err)
+		//}
+		//defer f.Close() // error handling omitted for example
+		//if err := pprof.StartCPUProfile(f); err != nil {
+		//	log.Fatal("could not start CPU profile: ", err)
+		//}
+		//defer pprof.StopCPUProfile()
 	if err := godotenv.Load(); err != nil {
 		log.Infoln("No separate .env file specified. Using values from environment")
 	}
@@ -90,31 +101,15 @@ func main() {
 	renderedHtml := ""
 
 	if useHandlebars {
-		renderedHtml = applyHandlebarsTemplate(template, data)
-
+		renderedHtml = applyHbsRendering(template, data)
+		//renderedHtml = applyHandlebarsTemplate(template, data)
 		log.Infoln("Rendering Handlebars.js template to html is done")
-
-		if debugOn {
-			err := ioutil.WriteFile("rendered.html", []byte(renderedHtml), 0777)
-			if err != nil {
-				log.WithError(err).Error("Cant write debug info (rendered.html)")
-			}
-		}
 	} else {
 		renderedHtml = ReadHtmlFile(htmlFile)
 		log.Infoln("Reading html is done")
 	}
 
-
 	PrintMemUsage()
-
-	if debugOn {
-		err := ioutil.WriteFile("rendered.html", []byte(renderedHtml), 0777)
-		if err != nil {
-			log.WithError(err).Infoln("Cant write debug log - rendered html file!")
-		}
-	}
-
 	generateXlsxFile(renderedHtml, output, batchSize)
 	PrintMemUsage()
 	log.Infoln("All done")
@@ -477,6 +472,27 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 	}
 }
 
+func applyHbsRendering(templateFilename string, dataFilename string) string {
+	//jsonCtx := ReadJsonFile(dataFilename)
+	//id := uuid.New()
+	//tmpOutput := id.String()
+	var HbsPathTemplate = "--data %s"//
+	cmd := exec.Command("hbs", fmt.Sprintf(HbsPathTemplate, dataFilename),
+		fmt.Sprintf("%s", templateFilename), "--stdout")
+
+	out,err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatal(err)
+	}
+	s:=string(out)
+	//byteValue, _ := ioutil.ReadFile(tmpOutput)
+	//
+	//if byteValue == nil {
+	//	log.Fatalf("File is empty? %s\n", jsonFilename)
+	//}
+	fmt.Printf(s)
+	return string(out)
+}
 
 // Apply Handlebars template to json data in dataFilename file.
 func applyHandlebarsTemplate(templateFilename string, dataFilename string) string {
@@ -488,9 +504,11 @@ func applyHandlebarsTemplate(templateFilename string, dataFilename string) strin
 	}
 
 	// register helpers
-	registerAllHelpers(tpl)
+	//registerAllHelpers(tpl)
 	data := jsonCtx
+	log.Infoln("Execute handlebars")
 	result, err := tpl.Exec(data)
+	log.Infoln("Execute handlebars.. done")
 
 	if err != nil {
 		log.WithError(err).Fatalf("Error applying template %s to json file %s", templateFilename, dataFilename)
