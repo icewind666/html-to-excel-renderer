@@ -12,7 +12,6 @@ import (
 	"github.com/jbowtie/gokogiri/xml"
 	"github.com/jbowtie/gokogiri/xpath"
 	"github.com/jessevdk/go-flags"
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 	_ "image"
 	_ "image/jpeg"
@@ -21,15 +20,14 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
-	//"runtime/pprof"
 	"strconv"
 	"strings"
 )
 
 
 var (
-	version = "1.1.7"
-	date    = "24.04.2021"
+	version = "1.1.8"
+	date    = "30.04.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -54,19 +52,6 @@ var opts struct {
 
 
 func main() {
-		//f, err := os.Create("cpu.test")
-		//if err != nil {
-		//	log.Fatal("could not create CPU profile: ", err)
-		//}
-		//defer f.Close() // error handling omitted for example
-		//if err := pprof.StartCPUProfile(f); err != nil {
-		//	log.Fatal("could not start CPU profile: ", err)
-		//}
-		//defer pprof.StopCPUProfile()
-	if err := godotenv.Load(); err != nil {
-		log.Infoln("No separate .env file specified. Using values from environment")
-	}
-
 	conf = config.New()
 	log.SetOutput(os.Stdout)
 	_,err := flags.Parse(&opts)
@@ -102,14 +87,12 @@ func main() {
 
 	if useHandlebars {
 		renderedHtml = applyHbsRendering(template, data)
-		//renderedHtml = applyHandlebarsTemplate(template, data)
 		log.Infoln("Rendering Handlebars.js template to html is done")
 	} else {
 		renderedHtml = ReadHtmlFile(htmlFile)
 		log.Infoln("Reading html is done")
 	}
 
-	PrintMemUsage()
 	generateXlsxFile(renderedHtml, output, batchSize)
 	PrintMemUsage()
 	log.Infoln("All done")
