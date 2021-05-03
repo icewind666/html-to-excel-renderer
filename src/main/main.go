@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/aymerick/raymond"
 	"github.com/icewind666/html-to-excel-renderer/src/generator"
-	"github.com/icewind666/html-to-excel-renderer/src/helpers"
 	"github.com/icewind666/html-to-excel-renderer/src/types"
 	"github.com/jbowtie/gokogiri"
 	"github.com/jbowtie/gokogiri/xml"
@@ -25,8 +23,8 @@ import (
 
 
 var (
-	version = "1.1.8"
-	date    = "30.04.2021"
+	version = "1.1.9"
+	date    = "02.05.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -41,12 +39,13 @@ var XpathImg = xpath.Compile(".//img")
 var opts struct {
 	UseHandleBars bool `long:"handlebars" description:"Use Handlebars template engine"`
 	Output string `short:"o" long:"output" description:"Output xslx filepath" required:"true"`
-	TemplateFile string `short:"t" long:"template" description:"A handlebars template file" value-name:"FILE"`
-	DataFile string `short:"d" long:"data" description:"A json data file" value-name:"FILE"`
-	HtmlFile string `short:"f" long:"html" description:"Html rendered source file" value-name:"FILE"`
+	TemplateFile string `short:"t" long:"template" description:"A handlebars template file"`
+	DataFile string `short:"d" long:"data" description:"A json data file"`
+	HtmlFile string `short:"f" long:"html" description:"Html rendered source file"`
 	BatchSize int `short:"b" long:"batch-size" description:"Max rows for one iteration. Smaller size leads to smaller amount of memory used"`
 	PxWidthToExcel float64 `long:"px-width" description:"Multiplier used to map pixels in html to width in excel"`
 	PxHeightToExcel float64 `long:"px-height" description:"Multiplier used to map pixels in html to height in excel"`
+	HelpersPath string `long:"helpers" description:"Path to helpers folder"`
 	DebugMode bool `long:"debug" description:"Enable debug mode"`
 	LogLevel string `long:"log-level" description:"Log level(info, warn, debug...)"`
 }
@@ -69,6 +68,25 @@ func main() {
 	output := opts.Output
 	debugMode := opts.DebugMode
 	batchSize := opts.BatchSize
+
+	if opts.PxWidthToExcel <= 0 {
+		opts.PxWidthToExcel = 0.15 // default
+	}
+
+	if opts.PxHeightToExcel <= 0 {
+		opts.PxHeightToExcel = 0.10 // default
+	}
+
+	if runtime.GOOS == "windows" && useHandlebars {
+		log.Fatalf("Current version does not support using Handlebars on Windows systems! Sorry!")
+	}
+
+	if useHandlebars && opts.HelpersPath == "" {
+		log.Error("Using Handlebars without setting helpers path will likely cause errors! Hope your template does not contain helpers :)")
+	} else {
+		opts.HelpersPath += "/*.js"
+	}
+
 	if batchSize <= 0 {
 		batchSize = 10000
 	}
@@ -83,13 +101,13 @@ func main() {
 	}
 
 	if debugMode {
-		log.Infoln("Debug mode is ON (will write rendered.html file in folder where binary is located, CAN CAUSE FILE LOCKS!)")
+		log.Infoln("Debug mode is ON (will write MUCH MORE logs!!)")
 	}
 
 	renderedHtml := ""
 
 	if useHandlebars {
-		renderedHtml = applyHbsRendering(template, data)
+		renderedHtml = applyHbsRendering(template, data, opts.HelpersPath)
 		log.Infoln("Rendering Handlebars.js template to html is done")
 	} else {
 		renderedHtml = ReadHtmlFile(htmlFile)
@@ -120,7 +138,11 @@ func NewHtmlStyle() *types.HtmlStyle {
 
 // ReadJsonFile Reads and unmarshalls json from file
 func ReadJsonFile(jsonFilename string) map[string]interface{} {
-	byteValue, _ := ioutil.ReadFile(jsonFilename)
+	byteValue, err := ioutil.ReadFile(jsonFilename)
+
+	if err != nil {
+		log.WithError(err).Fatalf("Cant read data json file!")
+	}
 
 	if byteValue == nil {
 		log.Fatalf("File is empty? %s\n", jsonFilename)
@@ -128,14 +150,14 @@ func ReadJsonFile(jsonFilename string) map[string]interface{} {
 
 	var result map[string]interface{}
 
-	err := json.Unmarshal(byteValue, &result)
-	if err != nil {
+	if err = json.Unmarshal(byteValue, &result); err != nil {
 		log.Fatalln("Error reading data json file! Can't deserialize json!")
 	}
 
 	return result
 }
 
+// ReadHtmlFile Read and return file file contents as string
 func ReadHtmlFile(htmlFilename string) string {
 	byteValue, _ := ioutil.ReadFile(htmlFilename)
 	if htmlFilename == "" {
@@ -147,22 +169,6 @@ func ReadHtmlFile(htmlFilename string) string {
 	}
 
 	return string(byteValue)
-}
-
-
-// PrintMemUsage outputs the current, total and OS memory being used. As well as the number
-// of garage collection cycles completed.
-func PrintMemUsage() {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
-	log.Infof("Alloc = %v MiB, HeapAlloc = %v MiB, Sys = %v MiB", bToMb(m.Alloc),
-		bToMb(m.HeapAlloc), bToMb(m.Sys))
-}
-
-// Converts bytes to human readable file size
-func bToMb(b uint64) uint64 {
-	return b / 1024 / 1024
 }
 
 
@@ -458,78 +464,29 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 	}
 }
 
-func applyHbsRendering(templateFilename string, dataFilename string) string {
-	//jsonCtx := ReadJsonFile(dataFilename)
-	//id := uuid.New()
-	//tmpOutput := id.String()
-	var HbsPathTemplate = "--data %s"//
-	cmd := exec.Command("hbs", fmt.Sprintf(HbsPathTemplate, dataFilename),
-		fmt.Sprintf("%s", templateFilename), "--stdout")
+// applyHbsRendering Calls shell hbs-cli to process handlebars.js template
+func applyHbsRendering(templateFilename string, dataFilename string, helpersPath string) string {
+	args := []string{"--helper", helpersPath, "--data", dataFilename, templateFilename, "--stdout"}
 
-	out,err := cmd.CombinedOutput()
-	if err != nil {
-		log.Fatal(err)
-	}
-	s:=string(out)
-	//byteValue, _ := ioutil.ReadFile(tmpOutput)
-	//
-	//if byteValue == nil {
-	//	log.Fatalf("File is empty? %s\n", jsonFilename)
-	//}
-	fmt.Printf(s)
-	return string(out)
-}
-
-// Apply Handlebars template to json data in dataFilename file.
-func applyHandlebarsTemplate(templateFilename string, dataFilename string) string {
-	jsonCtx := ReadJsonFile(dataFilename)
-	tpl, err := raymond.ParseFile(templateFilename)
+	cmd := exec.Command("hbs", args...)
+	log.Infof(cmd.String())
+	outStr, err := cmd.CombinedOutput() //TODO: change this to Output() before commit
 
 	if err != nil {
-		log.WithError(err).Fatalf("Error while parsing template %s \n", templateFilename)
+		log.Error(string(outStr))
+		log.WithError(err).Fatal("cant run hbs shell cmd")
 	}
 
-	// register helpers
-	//registerAllHelpers(tpl)
-	data := jsonCtx
-	log.Infoln("Execute handlebars")
-	result, err := tpl.Exec(data)
-	log.Infoln("Execute handlebars.. done")
-
-	if err != nil {
-		log.WithError(err).Fatalf("Error applying template %s to json file %s", templateFilename, dataFilename)
+	if opts.DebugMode {
+		err := ioutil.WriteFile("./debug.html", outStr, 0777)
+		if err != nil {
+			log.Warn("Cant write debug html file")
+		}
 	}
 
-	return result
+	return string(outStr)
 }
 
-func registerAllHelpers(template *raymond.Template)  {
-	template.RegisterHelper("math", helpers.MathHelper)
-	template.RegisterHelper("key", helpers.KeyHelper)
-	template.RegisterHelper("zeroIntHelper", helpers.ZeroIntHelper)
-	template.RegisterHelper("percentHelper", helpers.PercentHelper)
-	template.RegisterHelper("inspectionTimeHelper", helpers.InspectionTimeHelper)
-	template.RegisterHelper("dashHelper", helpers.DashHelper)
-	template.RegisterHelper("pressureHelper", helpers.PressureHelper)
-	template.RegisterHelper("allowHelper", helpers.AllowHelper)
-	template.RegisterHelper("upper", helpers.UpperHelper)
-	template.RegisterHelper("ifnull", helpers.IfNullHelper)
-	template.RegisterHelper("isAfterBeforeSheet", helpers.IsAfterBeforeSheetHelper)
-	template.RegisterHelper("summarize", helpers.SummarizeHelper)
-	template.RegisterHelper("lineSumRows", helpers.LineSumRowsHelper)
-	template.RegisterHelper("faceIdNotFoundName", helpers.FaceIdNotFoundNameHelper)
-	template.RegisterHelper("formatDate", helpers.FormatDate)
-	template.RegisterHelper("formatDateOfBirth", helpers.FormatDateOfBirth)
-	template.RegisterHelper("formatGender", helpers.FormatGender)
-	template.RegisterHelper("formatDateTime", helpers.FormatDateTime)
-	template.RegisterHelper("formatOrganization", helpers.FormatOrganization)
-	template.RegisterHelper("formatType", helpers.FormatType)
-	template.RegisterHelper("formatResult", helpers.FormatResult)
-	template.RegisterHelper("formatComplaints", helpers.FormatComplains)
-	template.RegisterHelper("dashOrData", helpers.DashOrData)
-	template.RegisterHelper("formatPressure", helpers.FormatPressure)
-	template.RegisterHelper("sleep", helpers.Sleep)
-}
 
 // ExtractStyles Returns parsed style struct
 func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
@@ -634,4 +591,20 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 		}
 	}
 	return resultStyle
+}
+
+
+// PrintMemUsage outputs the current, total and OS memory being used. As well as the number
+// of garage collection cycles completed.
+func PrintMemUsage() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
+	log.Infof("Alloc = %v MiB, HeapAlloc = %v MiB, Sys = %v MiB", bToMb(m.Alloc),
+		bToMb(m.HeapAlloc), bToMb(m.Sys))
+}
+
+// Converts bytes to human readable file size
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
 }
