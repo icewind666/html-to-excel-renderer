@@ -23,8 +23,8 @@ import (
 
 
 var (
-	version = "1.1.9"
-	date    = "02.05.2021"
+	version = "1.2.0"
+	date    = "26.05.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -133,6 +133,7 @@ func NewHtmlStyle() *types.HtmlStyle {
 		Colspan:           0,
 		VerticalAlign:     "",
 		CellValueType: StringValueType,
+		BackgroundColor:   "",
 	}
 }
 
@@ -448,7 +449,7 @@ func applyHbsRendering(templateFilename string, dataFilename string, helpersPath
 	defer timeTrack(time.Now(), "applyHbsRendering")
 	args := []string{"--helper", helpersPath, "--data", dataFilename, templateFilename, "--stdout"}
 	cmd := exec.Command("hbs", args...)
-	outStr, err := cmd.Output() //TODO: change this to Output() before commit
+	outStr, err := cmd.Output()
 
 	if err != nil {
 		log.WithError(err).Fatal("Can't run hbs shell command!")
@@ -563,7 +564,12 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 				case BooleanValueType:
 					resultStyle.CellValueType = cellType
 				}
+			case BackgroundColorAttrName:
+				resultStyle.BackgroundColor = value
 			}
+
+			}
+
 
 		}
 	}
