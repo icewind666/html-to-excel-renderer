@@ -133,6 +133,13 @@ func (x *ExcelizeGenerator) getCellAlignment(style *types.HtmlStyle) string{
 }
 
 /**
+Returns alignment json string
+*/
+func (x *ExcelizeGenerator) getCellColor(style *types.HtmlStyle) string{
+	return ColorToExcelizeString(style)
+}
+
+/**
 Returns aligment json string
 */
 func (x *ExcelizeGenerator) getCellFont(style *types.HtmlStyle) string{
@@ -154,18 +161,20 @@ func (x *ExcelizeGenerator) ApplyCellStyle(style *types.HtmlStyle) {
 				
 					"border": %s,				
 				
-					"alignment": %s
+					"alignment": %s,
+
+					"fill": %s
 				}`,
 				x.getCellFont(style),
 				x.getCellBorders(style),
 				x.getCellAlignment(style),
+				x.getCellColor(style),
 				)
-
 
 	newStyle, err := x.OpenedFile.NewStyle(styleJson)
 
 	if err != nil {
-		log.WithError(err).Error("Cant create new style in Excel sheet")
+		log.WithError(err).Fatalln("Cant create new style in Excel sheet")
 	}
 
 	cell,err := excelize.CoordinatesToCellName(x.CurrentCol, x.CurrentRow)
@@ -268,6 +277,13 @@ func AlignmentToExcelizeString(style *types.HtmlStyle) string {
 		isWrapped = "true"
 	}
 	return fmt.Sprintf(`{"horizontal": "%s","wrap_text": %s, "vertical": "%s"}`, style.TextAlign, isWrapped, style.VerticalAlign)
+}
+
+func ColorToExcelizeString(style *types.HtmlStyle) string {
+	if style.BackgroundColor != "" {
+		return fmt.Sprintf(`{"type": "pattern","color":["%s"],"pattern":1}`, style.BackgroundColor)
+	}
+	return fmt.Sprintf(`{"type": "pattern","color":["%s"],"pattern":1}`, "#ffffff")
 }
 
 func BordersToExcelizeString(style *types.HtmlStyle) string {

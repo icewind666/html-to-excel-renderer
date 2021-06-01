@@ -24,7 +24,7 @@ import (
 
 var (
 	version = "1.2.0"
-	date    = "26.05.2021"
+	date    = "01.06.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -566,7 +566,6 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 				}
 			case BackgroundColorAttrName:
 				resultStyle.BackgroundColor = value
-			}
 
 			}
 
