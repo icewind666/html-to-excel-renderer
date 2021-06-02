@@ -59,6 +59,7 @@ const TextVerticalAlignStyleMiddle = "center"
 const TextVerticalAlignStyleTop = "top"
 const TextVerticalAlignStyleBottom = "bottom"
 const ValueTypeAttrName = "cell-type"
+const BackgroundColorAttrName = "background-color"
 
 const(
 	FloatValueType types.ValueType = "float"

@@ -16,4 +16,5 @@ type HtmlStyle struct {
 	Colspan           int
 	VerticalAlign     string
 	CellValueType	  ValueType
+	BackgroundColor   string
 }
