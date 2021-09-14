@@ -23,8 +23,8 @@ import (
 
 
 var (
-	version = "1.2.0"
-	date    = "01.06.2021"
+	version = "1.2.1"
+	date    = "14.09.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -37,8 +37,9 @@ var XpathTd = xpath.Compile(".//td")
 var XpathImg = xpath.Compile(".//img")
 
 var opts struct {
+	Version bool `long:"version" description:"Show current version"`
 	UseHandleBars bool `long:"handlebars" description:"Use Handlebars template engine"`
-	Output string `long:"output" description:"Output xslx filepath" required:"true"`
+	Output string `long:"output" description:"Output xslx filepath"`
 	TemplateFile string `long:"template" description:"A Handlebars template file"`
 	DataFile string `long:"data" description:"A json data file. Used with handlebars rendering"`
 	HtmlFile string `long:"html" description:"Html rendered source file"`
@@ -53,13 +54,20 @@ var opts struct {
 
 func main() {
 	log.SetOutput(os.Stdout)
-	log.Infof("html-to-excel-renderer v%s, built at %s by %s", version, date, builtBy)
-
 	_,err := flags.Parse(&opts)
 
 	if err != nil {
 		log.WithError(err).Error("Can't parse command line arguments")
 	}
+
+	showVersion := opts.Version
+
+	if showVersion {
+		println(version)
+		os.Exit(0)
+	}
+
+	log.Infof("html-to-excel-renderer v%s, built at %s by %s", version, date, builtBy)
 
 	useHandlebars := opts.UseHandleBars
 	template := opts.TemplateFile
@@ -137,7 +145,7 @@ func NewHtmlStyle() *types.HtmlStyle {
 	}
 }
 
-// ReadHtmlFile Read and return file file contents as string
+// ReadHtmlFile Read and return file contents as string
 func ReadHtmlFile(htmlFilename string) string {
 	byteValue, _ := ioutil.ReadFile(htmlFilename)
 	if htmlFilename == "" {

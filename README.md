@@ -29,13 +29,20 @@ Npm package contains 2 scripts - postinstall and preuninstall - they are downloa
 (`sudo apt-get install libxml2-dev libc6-dev`)
  
 
-`go build -o html-to-excel-renderer github.com/icewind666/html-to-excel-renderer/src/main `
+`go build -o dist/html-to-excel-renderer github.com/icewind666/html-to-excel-renderer/src/main `
 
 Run command be like:
 
-`html-to-excel-renderer <template> <data> <output>`
+`html-to-excel-renderer --version`
 
-Example: `html-to-excel-renderer template.hbs data.json result.xslx`
+shows current version.
+
+
+
+---
+Example1: `html-to-excel-renderer template.hbs data.json result.xslx`
+
+cmd template is: `html-to-excel-renderer <template> <data> <output>`
 
 
 **template** - handlebars template file (hbs)
@@ -43,6 +50,14 @@ Example: `html-to-excel-renderer template.hbs data.json result.xslx`
 **data** - report data file (json)
 
 **output** - report output
+
+---
+Example2: `html-to-excel-renderer --html=source.html  --output=result.xslx`
+
+
+**source.html** - source html file 
+
+**result.xslx** - output excel file
 
 
 ## Environment settings
