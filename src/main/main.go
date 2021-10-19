@@ -63,7 +63,7 @@ func main() {
 	showVersion := opts.Version
 
 	if showVersion {
-		println(version)
+		fmt.Println(version)
 		os.Exit(0)
 	}
 
@@ -96,7 +96,7 @@ func main() {
 	}
 
 	if batchSize <= 0 {
-		batchSize = 10000
+		batchSize = 10_000_000
 	}
 
 	logLevel,err := log.ParseLevel(opts.LogLevel)
@@ -567,9 +567,10 @@ func ExtractStyles(node *xml.AttributeNode) *types.HtmlStyle {
 				resultStyle.VerticalAlign = value
 			case ValueTypeAttrName:
 				cellType := types.ValueType(value)
-				switch cellType { // filter only supported types
-				case FloatValueType:
-				case BooleanValueType:
+				if cellType == "float" {
+					resultStyle.CellValueType = cellType
+				}
+				if cellType == "bool" {
 					resultStyle.CellValueType = cellType
 				}
 			case BackgroundColorAttrName:

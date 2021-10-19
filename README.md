@@ -1,19 +1,10 @@
  # html-to-excel-renderer
 
- ## Install via npm
-
-Npm package contains 2 scripts - postinstall and preuninstall - they are downloading binaries and use go-npm 
-(https://www.npmjs.com/package/go-npm) to install them
-
-` npm install -g go-html-to-excel-renderer`
- 
-
-
  ## Install via downloading binaries
  On releases page choose your binary (https://github.com/icewind666/html-to-excel-renderer/releases)
  
- Then download it, unpack and put to accessible location
- (below is an example for linux_amd64)
+ Download it, unpack and put to an accessible location
+ (below is an example for linux_x86_64)
  
  `wget https://github.com/icewind666/html-to-excel-renderer/releases/download/v1.1.5/html-to-excel-renderer_v1.1.5_linux_x86_64.tar.gz`
 
@@ -22,16 +13,15 @@ Npm package contains 2 scripts - postinstall and preuninstall - they are downloa
  `sudo mv html-to-excel-renderer_v1.1.5_linux_x86_64/html-to-excel-renderer /usr/bin`
 
 
-## Install from source building
+## Install from source
 
  Dependencies: 
  `libxml2-dev`, `libc6-dev`
 (`sudo apt-get install libxml2-dev libc6-dev`)
- 
-
+`https://github.com/keithamus/hbs-cli`
 `go build -o dist/html-to-excel-renderer github.com/icewind666/html-to-excel-renderer/src/main `
 
-Run command be like:
+Then you can check installed version:
 
 `html-to-excel-renderer --version`
 
