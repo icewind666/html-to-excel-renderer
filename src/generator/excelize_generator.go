@@ -153,6 +153,47 @@ func (x *ExcelizeGenerator) getCellBorders(style *types.HtmlStyle) string{
 	return BordersToExcelizeString(style)
 }
 
+func (x *ExcelizeGenerator) ApplyBordersRange(style *types.HtmlStyle) {
+	styleJson := fmt.Sprintf(`
+				{
+					"font": %s,
+				
+					"border": %s,				
+				
+					"alignment": %s,
+
+					"fill": %s
+				}`,
+		x.getCellFont(style),
+		x.getCellBorders(style),
+		x.getCellAlignment(style),
+		x.getCellColor(style),
+	)
+
+	newStyle, err := x.OpenedFile.NewStyle(styleJson)
+
+	if err != nil {
+		log.WithError(err).Fatalln("Cant create new style in Excel sheet")
+	}
+
+	cellFrom,err := excelize.CoordinatesToCellName(x.CurrentCol, x.CurrentRow)
+	cellTo,err := excelize.CoordinatesToCellName(x.CurrentCol + style.Colspan -1, x.CurrentRow)
+
+	log.Infoln("cell from ", x.CurrentCol)
+	log.Infoln("cell to ", x.CurrentCol + style.Colspan)
+
+	err = x.OpenedFile.SetCellStyle(x.CurrentSheet, cellFrom, cellTo, newStyle)
+
+	if err != nil {
+		log.WithError(err).Error("Cant set style")
+	}
+
+	if style.Colspan > 1 {
+		x.SetColspan(style.Colspan)
+	}
+
+
+}
 
 func (x *ExcelizeGenerator) ApplyCellStyle(style *types.HtmlStyle) {
 	styleJson := fmt.Sprintf(`

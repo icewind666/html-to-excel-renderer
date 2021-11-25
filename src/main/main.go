@@ -114,6 +114,7 @@ func main() {
 
 	renderedHtml := ""
 	defer timeTrack(time.Now(), "main")
+
 	if useHandlebars {
 		renderedHtml = applyHbsRendering(template, data, opts.HelpersPath)
 		log.Infoln("Rendering Handlebars.js template to html is done")
@@ -389,6 +390,7 @@ func addImageToCell(img xml.Node, generator *generator.ExcelizeGenerator) {
 // processHtmlTheadTag Process thead tag (thead->tr + thead->tr->th). Apply column styles. Apply cell styles
 func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGenerator) {
 	defer timeTrack(time.Now(), "processHtmlTheadTag")
+
 	for _, theadTr := range theadTrs {
 		generator.AddRow()
 		theadTrThs, _ := theadTr.Search(XpathTh) // search for <th>
@@ -402,7 +404,10 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 
 			if thColspan != nil {
 				style.Colspan, _ = strconv.Atoi(thColspan.Value())
+				generator.ApplyBordersRange(style)
 			}
+
+
 
 			content := theadTh.Content()
 
@@ -429,6 +434,7 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 			}
 
 			if style != nil {
+				log.Infoln("ApplyColumnStyle")
 				generator.ApplyColumnStyle(style)
 				generator.ApplyCellStyle(style)
 			}
@@ -440,14 +446,20 @@ func processHtmlTheadTag(theadTrs []xml.Node, generator *generator.ExcelizeGener
 
 		if thStyle != nil {
 			rowStyle := ExtractStyles(thStyle)
+			log.Infoln(thStyle)
 			thColspan := thStyle.Attribute(ColspanAttrName)
+			log.Infoln("colspan", thColspan)
 
 			if thColspan != nil {
+				log.Infoln("Applying row colspan")
 				rowStyle.Colspan, _ = strconv.Atoi(thColspan.Value())
 			}
 			if rowStyle != nil {
+				log.Infoln("Applying row style")
 				generator.ApplyRowStyle(rowStyle)
 			}
+		} else {
+			log.Infoln("No row style found")
 		}
 	}
 }
