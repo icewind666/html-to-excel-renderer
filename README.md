@@ -78,4 +78,6 @@ For logs:
 **https://github.com/sirupsen/logrus**
  
  
- 
+ BUILDING:
+
+go build -o dist/html-to-excel-renderer github.com/icewind666/html-to-excel-renderer/src/main
