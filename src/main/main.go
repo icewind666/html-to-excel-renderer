@@ -23,8 +23,8 @@ import (
 
 
 var (
-	version = "1.2.3"
-	date    = "25.11.2021"
+	version = "1.2.4"
+	date    = "02.12.2021"
 	builtBy = "v.korennoj@medpoint24.ru"
 )
 
@@ -271,6 +271,7 @@ func processTableRows(rows []xml.Node, generator *generator.ExcelizeGenerator, o
 
 				if thColspan != nil {
 					style.Colspan,_ = strconv.Atoi(thColspan.Value())
+					generator.ApplyBordersRange(style)
 				}
 
 				generator.ApplyColumnStyle(style)
@@ -310,6 +311,7 @@ func processTableRows(rows []xml.Node, generator *generator.ExcelizeGenerator, o
 				cellValueType = cellStyle.CellValueType
 				if tdColspan != nil {
 					cellStyle.Colspan,_ = strconv.Atoi(tdColspan.Value())
+					generator.ApplyBordersRange(cellStyle)
 				}
 
 				generator.ApplyCellStyle(cellStyle)
